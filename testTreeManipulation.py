@@ -1,5 +1,6 @@
 import numpy as np
 import random
+from GeneticPrograming.ExpressionTreeManipulation.crossover import subtreeCrossoverOneCild
 
 from expression import *
 from GeneticPrograming.ExpressionTreeManipulation.randomTreeGenerator import *
@@ -66,6 +67,7 @@ def main():
     addNodeRoot.appendLeft(divNode)
     addNodeRoot.appendRight(mulNode)
 
+    """
     print("Original individual:")
     print(addNodeRoot.stringRepresentation())
     print(addNodeRoot.value(X_set0))
@@ -79,6 +81,26 @@ def main():
     print("Subtree mutation:")
     print(mutatedIndividual2.stringRepresentation())
     print(mutatedIndividual2.value(X_set0))
+    print()
+    """
+
+    x0 = VariableNode(0)
+    x1 = VariableNode(1)
+    x2 = VariableNode(2)
+    logNode = LogNode()
+    logNode.appendLeft(x0)
+    divNode2 = DivNode()
+    sinNode = SinNode()
+    sinNode.appendLeft(x1)
+    divNode2.appendLeft(sinNode)
+    divNode2.appendRight(x2)
+    parent2 = MulNode()
+    parent2.appendLeft(logNode)
+    parent2.appendRight(divNode2)
+    print("addNodeRoot", addNodeRoot.stringRepresentation())
+    print("parent2", parent2.stringRepresentation())
+    crossoverChild1 = subtreeCrossoverOneCild(addNodeRoot, parent2)
+    print("crossoverChild1", crossoverChild1.stringRepresentation())
 
 
 if __name__ == "__main__":

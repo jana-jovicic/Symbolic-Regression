@@ -4,7 +4,7 @@ from numpy.random import randint
 from numpy.random import random
 from GeneticPrograming.ExpressionTreeManipulation.randomTreeGenerator import generateRandomTree
 
-from expression import ConstantNode, SubNode
+from expression import ConstantNode
 
 
 
@@ -121,7 +121,7 @@ def subtreeMutation(individual, functions, terminals, maxHeight=4, minHeight=2):
 def candidateNodesAtRandomDepth(nodes):
 
 	depths = np.unique([x.depth() for x in nodes])
-	print("depths", depths)
+	#print("depths", depths)
 	chosenDepth = depths[randint(len(depths))]
 	print("chosenDepth", chosenDepth)
 	candidates = [x for x in nodes if x.depth() == chosenDepth]
