@@ -1,6 +1,6 @@
 import numpy as np
 import random
-from GeneticPrograming.ExpressionTreeManipulation.crossover import subtreeCrossoverOneCild
+from GeneticPrograming.ExpressionTreeManipulation.crossover import subtreeCrossover, subtreeCrossoverOneCild
 
 from expression import *
 from GeneticPrograming.ExpressionTreeManipulation.randomTreeGenerator import *
@@ -67,7 +67,7 @@ def main():
     addNodeRoot.appendLeft(divNode)
     addNodeRoot.appendRight(mulNode)
 
-    """
+    
     print("Original individual:")
     print(addNodeRoot.stringRepresentation())
     print(addNodeRoot.value(X_set0))
@@ -76,14 +76,24 @@ def main():
     print("One point mutation:")
     print(mutatedIndividual1.stringRepresentation())
     print(mutatedIndividual1.value(X_set0))
+
+    print("Original individual:")
+    print(addNodeRoot.stringRepresentation())
+    print(addNodeRoot.value(X_set0))
+    print()
     
     mutatedIndividual2 = subtreeMutation(addNodeRoot, functions, terminals, maxHeight=2, minHeight=1)
     print("Subtree mutation:")
     print(mutatedIndividual2.stringRepresentation())
     print(mutatedIndividual2.value(X_set0))
-    print()
-    """
 
+    print("Original individual:")
+    print(addNodeRoot.stringRepresentation())
+    print(addNodeRoot.value(X_set0))
+    print()
+    
+
+    
     x0 = VariableNode(0)
     x1 = VariableNode(1)
     x2 = VariableNode(2)
@@ -101,6 +111,23 @@ def main():
     print("parent2", parent2.stringRepresentation())
     crossoverChild1 = subtreeCrossoverOneCild(addNodeRoot, parent2)
     print("crossoverChild1", crossoverChild1.stringRepresentation())
+
+    print("Original individual1:")
+    print(addNodeRoot.stringRepresentation())
+    print("Original individual2:")
+    print(parent2.stringRepresentation())
+    print()
+    
+    child1, child2 = subtreeCrossover(addNodeRoot, parent2)
+    print("child1")
+    print(child1.stringRepresentation())
+    print("child2")
+    print(child2.stringRepresentation())
+    print("Original individual1:")
+    print(addNodeRoot.stringRepresentation())
+    print("Original individual2:")
+    print(parent2.stringRepresentation())
+    print()
 
 
 if __name__ == "__main__":

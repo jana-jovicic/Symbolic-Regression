@@ -8,63 +8,90 @@ from GeneticPrograming.ExpressionTreeManipulation.randomTreeGenerator import gen
 from expression import ConstantNode, SubNode
 
 
-def SubtreeCrossover( individual, donor ):
-	
-    # this version of crossover returns 1 child
+def subtreeCrossoverOneCild(individual1, individual2):
 
-    nodes1 = individual.GetSubtree()
-    nodes2 = donor.GetSubtree()	# no need to deep copy all nodes of parent2
-
-    nodes1 = __GetCandidateNodesAtUniformRandomDepth( nodes1 )
-    nodes2 = __GetCandidateNodesAtUniformRandomDepth( nodes2 )
-
-    to_swap1 = nodes1[ randint(len(nodes1)) ]
-    to_swap2 = deepcopy( nodes2[ randint(len(nodes2)) ] )	# we deep copy now, only the sutbree from parent2
-    to_swap2.parent = None
-
-    p1 = to_swap1.parent
-
-    if not p1:
-        return to_swap2
-
-    idx = p1.DetachChild(to_swap1)
-    p1.InsertChildAtPosition(idx, to_swap2)
-
-    return individual
-
-
-def subtreeCrossoverOneCild(parent1, parent2):
+    parent1 = deepcopy(individual1)
+    parent2 = deepcopy(individual2)
 
     nodes1 = parent1.subtrees()
     nodes2 = parent2.subtrees()
 
-    print("nodes1", nodes1)
-    print("nodes2", nodes2)
-
     nodes1 = candidateNodesAtRandomDepth(nodes1)
     nodes2 = candidateNodesAtRandomDepth(nodes2)
 
-    print("nodes1", nodes1)
-    print("nodes2", nodes2)
-
     toSwap1 = nodes1[randint(len(nodes1))]
-    print("toSwap1", toSwap1.stringRepresentation())
     toSwap2 = deepcopy(nodes2[randint(len(nodes2))])
     toSwap2.parent = None
-    print("toSwap2", toSwap2.stringRepresentation())
 
     p1 = toSwap1.parent
-    print("p1", p1)
 
     # root node, toSwap1 does not have parent
     if not p1:
         return toSwap2
 
     detached = p1.detachChildNode(toSwap1)
-    print("detached", detached)
     if detached == "left":
         p1.appendLeft(toSwap2)
     elif detached == "right":
         p1.appendRight(toSwap2)
 
     return parent1
+
+
+
+def subtreeCrossover(individual1, individual2):
+
+    parent1 = deepcopy(individual1)
+    parent2 = deepcopy(individual2)
+
+    nodes1 = parent1.subtrees()
+    nodes2 = parent2.subtrees()
+
+    #print("nodes1", nodes1)
+    #print("nodes2", nodes2)
+
+    nodes1 = candidateNodesAtRandomDepth(nodes1)
+    nodes2 = candidateNodesAtRandomDepth(nodes2)
+
+    toSwap1 = nodes1[randint(len(nodes1))]
+    print("toSwap1", toSwap1.stringRepresentation())
+    toSwap2 = nodes2[randint(len(nodes2))]
+    print("toSwap2", toSwap2.stringRepresentation())
+
+    p1 = toSwap1.parent
+    #print("p1", p1.stringRepresentation())
+
+    p2 = toSwap2.parent
+    #print("p2", p2.stringRepresentation())
+
+    if not p1:
+        parent1 = toSwap2
+
+    if not p2:
+        parent2 = toSwap1
+
+    if p1:
+        if p1.left == toSwap1:
+            p1.left = toSwap2
+            toSwap2.parent = p1
+            if p2:
+                if p2.left == toSwap2:
+                    p2.left = toSwap1
+                    toSwap1.parent = p2
+                else:
+                    p2.right = toSwap1
+                    toSwap1.parent = p2
+
+        else:
+            p1.right = toSwap2
+            toSwap2.parent = p1
+            if p2:
+                if p2.left == toSwap2:
+                    p2.left = toSwap1
+                    toSwap1.parent = p2
+                else:
+                    p2.right = toSwap1
+                    toSwap1.parent = p2
+
+
+    return parent1, parent2

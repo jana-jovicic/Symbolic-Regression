@@ -10,7 +10,9 @@ from expression import ConstantNode
 
 def onePointMutation(individual, functions, terminalVars, constInterval=[1,10]):
 
-    subtreeNodes = individual.subtrees()
+    newIndividual = deepcopy(individual)
+
+    subtreeNodes = newIndividual.subtrees()
     #print(subtreeNodes)
     mutationProb = 1.0/len(subtreeNodes)
     #print(mutationProb)
@@ -31,11 +33,12 @@ def onePointMutation(individual, functions, terminalVars, constInterval=[1,10]):
         
         """
         #for testing
-        if i == 3:
+        if i == 1:
             mutationProb = 1
         else:
             mutationProb = 0
         """
+        
 
         if r < mutationProb:
             arity = subtreeNodes[i].arity 
@@ -81,20 +84,22 @@ def onePointMutation(individual, functions, terminalVars, constInterval=[1,10]):
                 #print("parent right child:", parent.right)
             else:
                 subtreeNodes[i] = newNode
-                individual = newNode
+                newIndividual = newNode
                 #print("individual",individual)
 
-    return individual
+    return newIndividual
 
 
 
 
 def subtreeMutation(individual, functions, terminals, maxHeight=4, minHeight=2):
 
+    newIndividual = deepcopy(individual)
+
     newBranch = generateRandomTree(functions, terminals, maxHeight, minHeight)
     print("newBranch", newBranch.stringRepresentation())
 
-    subtreeNodes = individual.subtrees()
+    subtreeNodes = newIndividual.subtrees()
     print("subtreeNodes", subtreeNodes)
 
     subtreeNodes = candidateNodesAtRandomDepth(subtreeNodes)
@@ -105,8 +110,8 @@ def subtreeMutation(individual, functions, terminals, maxHeight=4, minHeight=2):
 
     # ograniciti da ne moze da se menja za depth=0 ?
     if toReplace.parent == None:
-        del individual
-        return newBranch
+        #del individual
+        return newIndividual
 
     parent = toReplace.parent
     detached = parent.detachChildNode(toReplace)
@@ -115,7 +120,7 @@ def subtreeMutation(individual, functions, terminals, maxHeight=4, minHeight=2):
     elif detached == "right":
         parent.appendRight(newBranch)
 
-    return individual
+    return newIndividual
 
 
 def candidateNodesAtRandomDepth(nodes):
