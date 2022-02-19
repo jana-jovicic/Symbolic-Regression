@@ -2,8 +2,8 @@ import numpy as np
 from copy import deepcopy
 from numpy.random import randint
 from numpy.random import random
-from GeneticPrograming.ExpressionTreeManipulation.mutation import candidateNodesAtRandomDepth
-from GeneticPrograming.ExpressionTreeManipulation.randomTreeGenerator import generateRandomTree
+from GeneticProgramming.ExpressionTreeManipulation.mutation import candidateNodesAtRandomDepth
+from GeneticProgramming.ExpressionTreeManipulation.randomTreeGenerator import generateRandomTree
 
 from expression import ConstantNode, SubNode
 
@@ -54,9 +54,9 @@ def subtreeCrossover(individual1, individual2):
     nodes2 = candidateNodesAtRandomDepth(nodes2)
 
     toSwap1 = nodes1[randint(len(nodes1))]
-    print("toSwap1", toSwap1.stringRepresentation())
+    #print("toSwap1", toSwap1.stringRepresentation())
     toSwap2 = nodes2[randint(len(nodes2))]
-    print("toSwap2", toSwap2.stringRepresentation())
+    #print("toSwap2", toSwap2.stringRepresentation())
 
     p1 = toSwap1.parent
     #print("p1", p1.stringRepresentation())

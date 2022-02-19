@@ -9,16 +9,16 @@ class FitnessFunction:
 		self.elite = None
 		self.evaluations = 0
 
-	def Evaluate(self, individual):
+	def evaluate(self, individual):
 
 		self.evaluations = self.evaluations + 1
 
 		output = individual.value(self.X_train)
-		print("output", output)
+		#print("output", output)
 
 
 		mse = np.mean(np.square(self.y_train - output))
-		print("mse", mse)
+		#print("mse", mse)
 		if np.isnan(mse):
 			mse = np.inf
 

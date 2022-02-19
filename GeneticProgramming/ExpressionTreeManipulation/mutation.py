@@ -2,7 +2,7 @@ import numpy as np
 from copy import deepcopy
 from numpy.random import randint
 from numpy.random import random
-from GeneticPrograming.ExpressionTreeManipulation.randomTreeGenerator import generateRandomTree
+from GeneticProgramming.ExpressionTreeManipulation.randomTreeGenerator import generateRandomTree
 
 from expression import ConstantNode
 
@@ -97,16 +97,16 @@ def subtreeMutation(individual, functions, terminals, maxHeight=4, minHeight=2):
     newIndividual = deepcopy(individual)
 
     newBranch = generateRandomTree(functions, terminals, maxHeight, minHeight)
-    print("newBranch", newBranch.stringRepresentation())
+    #print("newBranch", newBranch.stringRepresentation())
 
     subtreeNodes = newIndividual.subtrees()
-    print("subtreeNodes", subtreeNodes)
+    #print("subtreeNodes", subtreeNodes)
 
     subtreeNodes = candidateNodesAtRandomDepth(subtreeNodes)
-    print("subtreeNodes", subtreeNodes)
+    #print("subtreeNodes", subtreeNodes)
 
     toReplace = subtreeNodes[randint(len(subtreeNodes))]
-    print("toReplace", toReplace.stringRepresentation())
+    #print("toReplace", toReplace.stringRepresentation())
 
     # ograniciti da ne moze da se menja za depth=0 ?
     if toReplace.parent == None:
@@ -128,6 +128,6 @@ def candidateNodesAtRandomDepth(nodes):
 	depths = np.unique([x.depth() for x in nodes])
 	#print("depths", depths)
 	chosenDepth = depths[randint(len(depths))]
-	print("chosenDepth", chosenDepth)
+	#print("chosenDepth", chosenDepth)
 	candidates = [x for x in nodes if x.depth() == chosenDepth]
 	return candidates

@@ -1,6 +1,6 @@
 import random
-from GeneticPrograming.ExpressionTreeManipulation.randomTreeGenerator import generateRandomTree
-from GeneticPrograming.fitness import FitnessFunction
+from GeneticProgramming.ExpressionTreeManipulation.randomTreeGenerator import generateRandomTree
+from GeneticProgramming.fitness import FitnessFunction
 import numpy as np
 
 from expression import *
@@ -40,8 +40,7 @@ def main():
 
 
     fitness_function = FitnessFunction(X_set1, y_set1)
-
-    fitness_function.Evaluate(addNode1)
+    fitness_function.evaluate(addNode1)
     
 
 if __name__ == "__main__":

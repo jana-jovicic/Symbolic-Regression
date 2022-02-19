@@ -1,10 +1,10 @@
 import numpy as np
 import random
-from GeneticPrograming.ExpressionTreeManipulation.crossover import subtreeCrossover, subtreeCrossoverOneCild
+from GeneticProgramming.ExpressionTreeManipulation.crossover import subtreeCrossover, subtreeCrossoverOneCild
 
 from expression import *
-from GeneticPrograming.ExpressionTreeManipulation.randomTreeGenerator import *
-from GeneticPrograming.ExpressionTreeManipulation.mutation import *
+from GeneticProgramming.ExpressionTreeManipulation.randomTreeGenerator import *
+from GeneticProgramming.ExpressionTreeManipulation.mutation import *
 
 
 def main():
