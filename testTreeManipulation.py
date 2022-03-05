@@ -18,7 +18,7 @@ def main():
     terminals = []
     minHeight = 1
     currMaxDepth = 4
-    constInterval = [0,10]
+    #constInterval = [0,10]
     varProbability = 0.85
 
     nFeatures = X_set0.shape[1]
@@ -26,7 +26,7 @@ def main():
     for i in range(nFeatures):
         terminals.append(VariableNode(i))
 
-    t = generateRandomTree(functions, terminals, currMaxDepth, currentHeight=0, method='grow' if np.random.random() < 0.5 else 'full', minHeight=minHeight, constInterval=constInterval, varProbability=varProbability)
+    t = generateRandomTree(functions, terminals, currMaxDepth, currentHeight=0, method='grow' if np.random.random() < 0.5 else 'full', minHeight=minHeight, varProbability=varProbability)
     
     print("Random individual:")
     print(t.stringRepresentation())

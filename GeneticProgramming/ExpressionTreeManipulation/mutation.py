@@ -1,14 +1,12 @@
+from expression import EphemeralRandomConstantNode
 import numpy as np
 from copy import deepcopy
 from numpy.random import randint
 from numpy.random import random
 from GeneticProgramming.ExpressionTreeManipulation.randomTreeGenerator import generateRandomTree
 
-from expression import ConstantNode
 
-
-
-def onePointMutation(individual, functions, terminalVars, constInterval=[1,10]):
+def onePointMutation(individual, functions, terminalVars):
 
     newIndividual = deepcopy(individual)
 
@@ -49,8 +47,9 @@ def onePointMutation(individual, functions, terminalVars, constInterval=[1,10]):
                     randIdx = randint(len(terminalVars))
                     newNode = deepcopy(terminalVars[randIdx])
                 else:
-                    randConst = randint(constInterval[0],constInterval[1])
-                    newNode = ConstantNode(randConst)
+                    newNode = EphemeralRandomConstantNode()
+                    #randConst = randint(constInterval[0],constInterval[1])
+                    #newNode = ConstantNode(randConst)
             else:
                 randIdx = randint(len(arityFunctionsMap[arity]))
                 #print("randIdx", randIdx)

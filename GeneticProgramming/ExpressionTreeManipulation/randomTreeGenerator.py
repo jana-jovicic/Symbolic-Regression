@@ -3,10 +3,10 @@ from copy import deepcopy
 from numpy.random import randint
 from numpy.random import random
 
-from expression import ConstantNode
+from expression import EphemeralRandomConstantNode
 
 
-def generateRandomTree(functions, terminalVars, maxHeight, currentHeight=0, method='grow', minHeight=2, constInterval=[0,10], varProbability=0.8):
+def generateRandomTree(functions, terminalVars, maxHeight, currentHeight=0, method='grow', minHeight=2, varProbability=0.8):
 
     #print("method", method)
     #print("functions", functions)
@@ -22,8 +22,9 @@ def generateRandomTree(functions, terminalVars, maxHeight, currentHeight=0, meth
             t = deepcopy(terminalVars[randIdx])
             #print("terminal t:", t)
         else:
-            randConst = randint(constInterval[0],constInterval[1])
-            t = ConstantNode(randConst)
+            t = EphemeralRandomConstantNode()
+            #randConst = randint(constInterval[0],constInterval[1])
+            #t = ConstantNode(randConst)
     else:
         if method == 'grow' and currentHeight >= minHeight:
             termsAndFuncs = terminalVars + functions
@@ -41,11 +42,11 @@ def generateRandomTree(functions, terminalVars, maxHeight, currentHeight=0, meth
 
 
         if t.arity > 0:
-            leftChild = generateRandomTree(functions, terminalVars, maxHeight, currentHeight=currentHeight+1, method=method, minHeight=minHeight, constInterval=constInterval, varProbability=varProbability)
+            leftChild = generateRandomTree(functions, terminalVars, maxHeight, currentHeight=currentHeight+1, method=method, minHeight=minHeight, varProbability=varProbability)
             #print("arity leftChild", leftChild)
             t.appendLeft(leftChild)
         if t.arity == 2:
-            rightChild = generateRandomTree(functions, terminalVars, maxHeight, currentHeight = currentHeight+1, method=method, minHeight=minHeight, constInterval=constInterval, varProbability=varProbability)
+            rightChild = generateRandomTree(functions, terminalVars, maxHeight, currentHeight = currentHeight+1, method=method, minHeight=minHeight, varProbability=varProbability)
             #print("arity rightChild", rightChild)
             t.appendRight(rightChild)
 

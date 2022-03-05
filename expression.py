@@ -124,6 +124,25 @@ class VariableNode(Node):
         return X[:,self.id]
 
 
+class EphemeralRandomConstantNode(Node):
+    def __init__(self):
+        super(EphemeralRandomConstantNode, self).__init__()
+        # random number from [-1,1]
+        self.valueNumber = np.round(np.random.random()*2 - 1, 3)
+
+    def __str__(self):
+        return str(self.valueNumber)    
+
+    def __repr__(self):
+        return str(self.valueNumber)   
+
+    def stringRepresentationSpecificNode(self, args):
+        return str(self.valueNumber)
+
+    def value(self, X):
+        return np.array(self.valueNumber)
+
+"""
 class ConstantNode(Node):
     def __init__(self, valueNumber):
         super(ConstantNode, self).__init__()
@@ -140,6 +159,7 @@ class ConstantNode(Node):
 
     def value(self, X):
         return np.array(self.valueNumber)
+"""
 
 
 """
@@ -267,7 +287,6 @@ class SinNode(Node):
     def __init__(self):
         super(SinNode, self).__init__()
         self.arity = 1
-        self.is_not_arithmetic = True
 
     def __str__(self):
         return 'sin'
@@ -287,7 +306,6 @@ class CosNode(Node):
     def __init__(self):
         super(CosNode, self).__init__()
         self.arity = 1
-        self.is_not_arithmetic = True
 
     def __str__(self):
         return 'cos'
@@ -308,7 +326,6 @@ class LogNode(Node):
     def __init__(self):
         super(LogNode, self).__init__()
         self.arity = 1
-        self.is_not_arithmetic = True
 
     def __str__(self):
         return 'log'
@@ -331,7 +348,6 @@ class ExpNode(Node):
     def __init__(self):
         super(ExpNode, self).__init__()
         self.arity = 1
-        self.is_not_arithmetic = True
 
     def __str__(self):
         return 'exp'

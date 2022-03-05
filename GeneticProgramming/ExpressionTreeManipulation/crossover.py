@@ -5,7 +5,7 @@ from numpy.random import random
 from GeneticProgramming.ExpressionTreeManipulation.mutation import candidateNodesAtRandomDepth
 from GeneticProgramming.ExpressionTreeManipulation.randomTreeGenerator import generateRandomTree
 
-from expression import ConstantNode, SubNode
+from expression import SubNode
 
 
 def subtreeCrossoverOneCild(individual1, individual2):

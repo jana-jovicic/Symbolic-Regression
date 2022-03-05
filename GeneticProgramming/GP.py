@@ -16,7 +16,6 @@ class GP:
         functions,
         terminals,
         populationSize = 500,
-        crossoverRate = 0.5,
         mutationRate = 0.5,
         opMutationRate = 0.0,
         maxEvaluations = -1,
@@ -24,7 +23,7 @@ class GP:
         maxTime = -1,
         minHeight = 2,
         initializationMaxTreeHeight = 4,
-        maxTreeSize = 100,
+        maxTreeSize = 10,
         tournamentSize = 4,
         reproductionSize = 200,
         verbose = False):
@@ -96,14 +95,14 @@ class GP:
             # check if children meet constraints	
             invalidChild1 = False
             if (self.maxTreeSize > -1 and len(child1.subtrees()) > self.maxTreeSize):
-                print("Child1 len in maxTreeSize", len(child1.subtrees()))
+                #print("Child1 len in maxTreeSize", len(child1.subtrees()))
                 invalidChild1 = True
             elif (child1.height() < self.minHeight):
                 invalidChild1 = True
 
             invalidChild2 = False
             if (self.maxTreeSize > -1 and len(child2.subtrees()) > self.maxTreeSize):
-                print("Child2 len in maxTreeSize", len(child2.subtrees()))
+                #print("Child2 len in maxTreeSize", len(child2.subtrees()))
                 invalidChild2 = True
             elif (child2.height() < self.minHeight):
                 invalidChild2 = True
