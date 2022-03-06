@@ -1,25 +1,6 @@
-Run 0:
-Best individual: (((x0 * 0.272) + (x0 * x0)) + x0)
-Train MSE: 0.039816801318712146
-Test MSE: 0.04976486209913524
--------------------------------
-Run 1:
-Best individual: (x0 - ((-0.563 * x0) * x0))
-Train MSE: 0.1476685891132318
-Test MSE: 0.22635601933087604
--------------------------------
-Run 2:
-Best individual: (x0 + (x0 * (x0 + (x0 * x0))))
-Train MSE: 5.7227632633220724e-33
-Test MSE: 1.0271626370065257e-33
--------------------------------
-Run 3:
-Best individual: (x0 + (x0 * (x0 + (x0 * x0))))
-Train MSE: 5.7227632633220724e-33
-Test MSE: 1.0271626370065257e-33
--------------------------------
-Run 4:
-Best individual: ((x0 * ((x0 * x0) + x0)) + x0)
-Train MSE: 5.7227632633220724e-33
-Test MSE: 1.0271626370065257e-33
--------------------------------
+Population size: 25
+Max number of generations: 20
+Reproduction size: 15
+Mutation rate: 0.3
+One point mutation rate: 0.3
+Error type: normalizedAdjusted

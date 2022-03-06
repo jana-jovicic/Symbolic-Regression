@@ -1,6 +1,7 @@
 import csv
 import time
 import os, argparse
+from GeneticProgramming.fitness import adjustedFitness, mse, normalizedAdjustedFitness, rawFitness, rmse, nrmse
 import numpy as np 
 import sklearn.datasets
 from sklearn.model_selection import train_test_split
@@ -64,11 +65,13 @@ def main():
 	fs = [functionNames[f] for f in cfg['FUNCTIONS']]
 	print(fs)
 
+	errorType = cfg['ERROR_TYPE']
+
 	# Initalize GP estimator
 	gpEstimator = GeneticProgrammingSymbolicRegressionEstimator(populationSize=cfg['POPULATION_SIZE'], maxGenerations=cfg['MAX_GENERATIONS'], 
 		verbose=cfg['VERBOSE'], maxTreeSize=cfg['MAX_TREE_SIZE'], mutationRate=cfg['MUTATION_RATE'], opMutationRate=cfg['OP_MUTATION_RATE'], 
 		minHeight=cfg['MIN_HEIGHT'], initializationMaxTreeHeight=cfg['INITIALIZATION_MAX_TREE_HEIGHT'], 
-		tournamentSize=cfg['TOURNAMENT_SIZE'], functions = fs)
+		tournamentSize=cfg['TOURNAMENT_SIZE'], reproductionSize=cfg['REPODUCTION_SIZE'], errorType=errorType, errorEpsilon=cfg['ERROR_EPSILON'], functions = fs)
 
 	X, y = loadDataset(args.datapointsFile)
 	print(X[:5])
@@ -86,11 +89,20 @@ def main():
 	csvFile = resFile[: resFile.rfind('.')] + '.csv'
 	print(csvFile)
 	open(csvFile, 'w').close()
-	header = ['run', 'trainMSE', 'testMSE', 'bestIndividual', 'time']
+	header = ['Run', 'TrainError', 'TestError', 'BestIndividual', 'GenerationOfBestSolution', 'Time']
+	# dodati symbolicEquivalence (pomocu sympy)
 
 	with open(csvFile, 'w', encoding='UTF8') as file:
 		writer = csv.writer(file)
 		writer.writerow(header)
+
+	with open(resFile, 'a+') as file:
+			file.write('Population size: ' + str(cfg['POPULATION_SIZE']) + '\n')
+			file.write('Max number of generations: ' + str(cfg['MAX_GENERATIONS']) + '\n')
+			file.write('Reproduction size: ' + str(cfg['REPODUCTION_SIZE']) + '\n')
+			file.write('Mutation rate: ' + str(cfg['MUTATION_RATE']) + '\n')
+			file.write('One point mutation rate: ' + str(cfg['OP_MUTATION_RATE']) + '\n')
+			file.write('Error type: ' + str(errorType) + '\n')
 
 
 	for run in range(args.nRuns):
@@ -105,25 +117,49 @@ def main():
 		bestStr = bestIndividual.stringRepresentation()
 		print('Best individual:', bestStr)
 
-		trainMSE = np.mean(np.square(y_train - gpEstimator.predict(X_train)))
-		testMSE = np.mean(np.square(y_test - gpEstimator.predict(X_test))) 
-		print('Train MSE:', trainMSE)
-		print('Test MSE:', testMSE)
+		y_train_pred = gpEstimator.predict(X_train)
+		y_test_pred = gpEstimator.predict(X_test)
 
+		if errorType == 'mse':
+			trainErr = mse(y_train, y_train_pred)
+			testErr = mse(y_test, y_test_pred)
+		elif errorType == 'rmse':
+			trainErr = rmse(y_train, y_train_pred)
+			testErr = rmse(y_test, y_test_pred)
+		elif errorType == 'nrmse':
+			trainErr = nrmse(y_train, y_train_pred)
+			testErr = nrmse(y_test, y_test_pred)
+		elif errorType == 'raw':
+			trainErr = rawFitness(y_train, y_train_pred)
+			testErr = rawFitness(y_test, y_test_pred)
+		elif errorType == 'adjusted':
+			trainErr = adjustedFitness(y_train, y_train_pred)
+			testErr = adjustedFitness(y_test, y_test_pred)
+		elif errorType == 'normalizedAdjusted':
+			trainErr = normalizedAdjustedFitness(y_train, y_train_pred, gpEstimator.fitnessFunction.sumAdjustedFitnesses)
+			testErr = normalizedAdjustedFitness(y_test, y_test_pred, gpEstimator.fitnessFunction.sumAdjustedFitnesses)
+
+		print('Train' + errorType + ' :', trainErr)
+		print('Test' + errorType + ' :', testErr)
+
+		"""
 		with open(resFile, 'a+') as file:
 			file.write('Run ' + str(run) + ':\n')
 			file.write('Best individual: ' + bestStr + '\n')
-			file.write('Train MSE: ' + str(trainMSE) + '\n')
-			file.write('Test MSE: ' + str(testMSE) + '\n')
+			file.write('Solution found at generation: ' + str(gpEstimator.gp.generations) + '\n')
+			file.write('Train error: ' + str(trainErr) + '\n')
+			file.write('Test error: ' + str(testErr) + '\n')
 			file.write('-------------------------------\n')
+		"""
 
-		data = [run, trainMSE, testMSE, bestStr, endTime]
+		generationOfBestSolution = gpEstimator.gp.generations
+		data = [run, trainErr, testErr, bestStr, generationOfBestSolution, endTime]
 		with open(csvFile, 'a+', encoding='UTF8') as file:
 			writer = csv.writer(file)
 			writer.writerow(data)
 
 
-	print('Results are written to ' + dir+resFile)
+	print('Results are written to ' + resFile + '\n and' + csvFile)
 	
 	
 

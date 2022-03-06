@@ -23,6 +23,7 @@ class GeneticProgrammingSymbolicRegressionEstimator(BaseEstimator, RegressorMixi
 		tournamentSize = 4, 
 		useLinearScaling = True, 
 		reproductionSize = 200,
+		errorType = 'mse',
 		errorEpsilon = 1e-10,
 		verbose = False):
 		
@@ -37,14 +38,14 @@ class GeneticProgrammingSymbolicRegressionEstimator(BaseEstimator, RegressorMixi
 		self.X_ = X
 		self.y_ = y
 
-		fitnessFunction = FitnessFunction(X, y)
+		self.fitnessFunction = FitnessFunction(X, y, self.errorType)
 			
 		terminals = []
 		nFeatures = X.shape[1]
 		for i in range(nFeatures):
 			terminals.append(VariableNode(i))
 
-		gp = GP(fitnessFunction, self.functions, terminals, 
+		gp = GP(self.fitnessFunction, self.functions, terminals, 
 			populationSize = self.populationSize, 
 			maxGenerations = self.maxGenerations,
 			maxTime = self.maxTime,
@@ -55,6 +56,7 @@ class GeneticProgrammingSymbolicRegressionEstimator(BaseEstimator, RegressorMixi
 			maxTreeSize = self.maxTreeSize,
 			tournamentSize = self.tournamentSize,
 			reproductionSize = self.reproductionSize,
+			errorType = self.errorType,
 			errorEpsilon = self.errorEpsilon,
 			verbose = self.verbose)
 
