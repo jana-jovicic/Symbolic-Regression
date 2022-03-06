@@ -1,5 +1,5 @@
 import random
-from GeneticProgramming.ExpressionTreeManipulation.randomTreeGenerator import generateRandomTree
+from GeneticProgramming.randomTreeGenerator import generateRandomTree
 from GeneticProgramming.fitness import FitnessFunction
 import numpy as np
 

@@ -3,7 +3,7 @@ import numpy as np
 from copy import deepcopy
 from numpy.random import randint
 from numpy.random import random
-from GeneticProgramming.ExpressionTreeManipulation.randomTreeGenerator import generateRandomTree
+from GeneticProgramming.randomTreeGenerator import generateRandomTree
 
 
 def onePointMutation(individual, functions, terminalVars):

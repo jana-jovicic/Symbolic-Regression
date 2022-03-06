@@ -2,8 +2,8 @@ import numpy as np
 from copy import deepcopy
 from numpy.random import randint
 from numpy.random import random
-from GeneticProgramming.ExpressionTreeManipulation.mutation import candidateNodesAtRandomDepth
-from GeneticProgramming.ExpressionTreeManipulation.randomTreeGenerator import generateRandomTree
+from GeneticProgramming.mutation import candidateNodesAtRandomDepth
+from GeneticProgramming.randomTreeGenerator import generateRandomTree
 
 from expression import SubNode
 

@@ -1,7 +1,7 @@
 import inspect
-from GeneticProgramming.ExpressionTreeManipulation.crossover import subtreeCrossover
-from GeneticProgramming.ExpressionTreeManipulation.mutation import subtreeMutation, onePointMutation
-from GeneticProgramming.ExpressionTreeManipulation.randomTreeGenerator import generateRandomTree
+from GeneticProgramming.crossover import subtreeCrossover
+from GeneticProgramming.mutation import subtreeMutation, onePointMutation
+from GeneticProgramming.randomTreeGenerator import generateRandomTree
 from GeneticProgramming.selection import tournamentSelection
 import numpy as np
 from numpy.random import random, randint
@@ -26,6 +26,7 @@ class GP:
         maxTreeSize = 10,
         tournamentSize = 4,
         reproductionSize = 200,
+        errorEpsilon = 1e-10,
         verbose = False):
 
         args, _, _, values = inspect.getargvalues(inspect.currentframe())
@@ -40,6 +41,8 @@ class GP:
     def stopCondition(self):
         terminate = False
         elapsedTime = time.time() - self.startTime
+        if self.fitnessFunction.bestIndividual.fitness < self.errorEpsilon:
+            terminate = True
         if self.maxEvaluations > 0 and self.fitnessFunction.evaluations >= self.maxEvaluations:
             terminate = True
         elif self.maxGenerations > 0 and self.generations >= self.maxGenerations:
@@ -133,6 +136,6 @@ class GP:
             self.generations = self.generations + 1
 
             if self.verbose:
-                print ('g:',self.generations,'best fitness:', np.round(self.fitnessFunction.elite.fitness,3), ', size:', len(self.fitnessFunction.elite.subtrees()))
+                print ('g:',self.generations,'best fitness:', np.round(self.fitnessFunction.bestIndividual.fitness,3), ', size:', len(self.fitnessFunction.bestIndividual.subtrees()))
             
             

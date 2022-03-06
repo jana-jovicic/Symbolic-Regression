@@ -1,5 +1,6 @@
-import argparse
-from tokenize import Double
+import csv
+import time
+import os, argparse
 import numpy as np 
 import sklearn.datasets
 from sklearn.model_selection import train_test_split
@@ -51,8 +52,10 @@ def main():
 	"""
 
 	parser = argparse.ArgumentParser(description='GP')
+	parser.add_argument("--GPtype", type=str, default='basic', help='type of GP algorithm')
 	parser.add_argument("--config", type=str, default='./configs/gp.yaml', help='path to configuration file')
 	parser.add_argument('--datapointsFile', default='generatedDatasets/f1.txt', type=str, help='path to file that contains datapoints')
+	parser.add_argument("--nRuns", type=int, default=1, help='number of runs of GP algorithm')
 	args = parser.parse_args()
 
 	cfg = getConfig(args.config)
@@ -71,18 +74,57 @@ def main():
 	print(X[:5])
 	print(y[:5])
 
-	X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
+	X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-	gpEstimator.fit(X_train, y_train)
+	dir = './GeneticProgramming/results/basicGP'
+	if not os.path.exists(dir):
+		os.makedirs(dir)
+	resFile = args.datapointsFile[args.datapointsFile.rfind(os.path.sep) : ]
+	resFile = dir + resFile
+	open(resFile, 'w').close()
 
-	# Get final result
-	bestIndividual = gpEstimator.getBest()
-	bestStr = bestIndividual.stringRepresentation()
-	print('Best individual found:', bestStr)
+	csvFile = resFile[: resFile.rfind('.')] + '.csv'
+	print(csvFile)
+	open(csvFile, 'w').close()
+	header = ['run', 'trainMSE', 'testMSE', 'bestIndividual', 'time']
 
-	# Show mean squared error
-	print('Train MSE:',np.mean(np.square(y_train - gpEstimator.predict(X_train))))
-	print('Test MSE:',np.mean(np.square(y_test - gpEstimator.predict(X_test))))
+	with open(csvFile, 'w', encoding='UTF8') as file:
+		writer = csv.writer(file)
+		writer.writerow(header)
+
+
+	for run in range(args.nRuns):
+
+		startTime = round(time.time() * 1000)
+
+		gpEstimator.fit(X_train, y_train)
+
+		endTime = round(time.time() * 1000) - startTime
+
+		bestIndividual = gpEstimator.getBest()
+		bestStr = bestIndividual.stringRepresentation()
+		print('Best individual:', bestStr)
+
+		trainMSE = np.mean(np.square(y_train - gpEstimator.predict(X_train)))
+		testMSE = np.mean(np.square(y_test - gpEstimator.predict(X_test))) 
+		print('Train MSE:', trainMSE)
+		print('Test MSE:', testMSE)
+
+		with open(resFile, 'a+') as file:
+			file.write('Run ' + str(run) + ':\n')
+			file.write('Best individual: ' + bestStr + '\n')
+			file.write('Train MSE: ' + str(trainMSE) + '\n')
+			file.write('Test MSE: ' + str(testMSE) + '\n')
+			file.write('-------------------------------\n')
+
+		data = [run, trainMSE, testMSE, bestStr, endTime]
+		with open(csvFile, 'a+', encoding='UTF8') as file:
+			writer = csv.writer(file)
+			writer.writerow(data)
+
+
+	print('Results are written to ' + dir+resFile)
+	
 	
 
 

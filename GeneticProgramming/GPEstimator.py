@@ -20,9 +20,10 @@ class GeneticProgrammingSymbolicRegressionEstimator(BaseEstimator, RegressorMixi
 		minHeight = 2,
 		initializationMaxTreeHeight = 6,
 		maxTreeSize = 10,
-		tournamentSize =4, 
+		tournamentSize = 4, 
 		useLinearScaling = True, 
 		reproductionSize = 200,
+		errorEpsilon = 1e-10,
 		verbose = False):
 		
 		args, _, _, values = inspect.getargvalues(inspect.currentframe())
@@ -54,6 +55,7 @@ class GeneticProgrammingSymbolicRegressionEstimator(BaseEstimator, RegressorMixi
 			maxTreeSize = self.maxTreeSize,
 			tournamentSize = self.tournamentSize,
 			reproductionSize = self.reproductionSize,
+			errorEpsilon = self.errorEpsilon,
 			verbose = self.verbose)
 
 		gp.run()
@@ -63,9 +65,9 @@ class GeneticProgrammingSymbolicRegressionEstimator(BaseEstimator, RegressorMixi
 
 
 	def getBest(self):
-		return self.gp.fitnessFunction.elite
+		return self.gp.fitnessFunction.bestIndividual
 
 
 	def predict(self, X):
-		prediction = self.gp.fitnessFunction.elite.value(X)
+		prediction = self.gp.fitnessFunction.bestIndividual.value(X)
 		return prediction

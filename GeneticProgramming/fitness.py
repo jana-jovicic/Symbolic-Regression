@@ -6,7 +6,7 @@ class FitnessFunction:
 	def __init__(self, X_train, y_train):
 		self.X_train = X_train
 		self.y_train = y_train
-		self.elite = None
+		self.bestIndividual = None
 		self.evaluations = 0
 
 	def evaluate(self, individual):
@@ -24,6 +24,6 @@ class FitnessFunction:
 
 		individual.fitness = mse
 
-		if not self.elite or individual.fitness < self.elite.fitness:
-			del self.elite
-			self.elite = deepcopy(individual)
+		if not self.bestIndividual or individual.fitness < self.bestIndividual.fitness:
+			del self.bestIndividual
+			self.bestIndividual = deepcopy(individual)
