@@ -1,15 +1,16 @@
+from GeneticProgramming.fitness import FitnessFunction
 import numpy as np
 import random
-from GeneticProgramming.crossover import subtreeCrossover, subtreeCrossoverOneCild
+from GeneticProgramming.crossover import SSC, subtreeCrossover, subtreeCrossoverOneCild
 
 from expression import *
 from GeneticProgramming.randomTreeGenerator import *
 from GeneticProgramming.mutation import *
 
+np.random.seed(1)  # gives semantically similar individuals
+#np.random.seed(42)  # gives semantically dissimilar individuals
 
 def main():
-
-    #np.random.seed(42)
 
     X_set0 = np.array([[10,20,30]])
     X_set1 = np.array([[10,20,30], [40,50,60]])
@@ -123,6 +124,45 @@ def main():
     print(child1.stringRepresentation())
     print("child2")
     print(child2.stringRepresentation())
+    print("Original individual1:")
+    print(addNodeRoot.stringRepresentation())
+    print("Original individual2:")
+    print(parent2.stringRepresentation())
+    print()
+
+
+
+    print("--------------------------")
+    print("Semantically based crossover")
+    print()
+    print("Original individual1:")
+    print(addNodeRoot.stringRepresentation())
+    print("Original individual2:")
+    print(parent2.stringRepresentation())
+    print()
+
+
+    # y_real = ((cos(x1) / (x0 + x1)) + (sin(x0) * x2))
+    y_set0 = []
+    for i in range(len(X_set0)):
+        y_set0.append([((np.cos(X_set0[i][1]) / (X_set0[i][0] + X_set0[i][1])) + (np.sin(X_set0[i][0]) * X_set0[i][2]))])
+    y_set0 = np.array(y_set0)
+
+    y_set1 = []
+    for i in range(len(X_set1)):
+        y_set1 = np.array([((np.cos(X_set1[i][1]) / (X_set1[i][0] + X_set1[i][1])) + (np.sin(X_set1[i][0]) * X_set1[i][2]))])
+    y_set1 = np.array(y_set1)
+    
+    fitnessFunction = FitnessFunction(X_set1, y_set1, 'mse')
+
+    child1, child2 = SSC(addNodeRoot, parent2, fitnessFunction.X_train, 1e-4, 0.4, 1)
+
+    print()
+    print("child1")
+    print(child1.stringRepresentation())
+    print("child2")
+    print(child2.stringRepresentation())
+    print()
     print("Original individual1:")
     print(addNodeRoot.stringRepresentation())
     print("Original individual2:")

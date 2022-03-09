@@ -39,7 +39,7 @@ def main():
     print(addNode1.value(X_set0))
 
 
-    fitness_function = FitnessFunction(X_set1, y_set1)
+    fitness_function = FitnessFunction(X_set1, y_set1, 'mse')
     fitness_function.evaluate(addNode1)
     
 
