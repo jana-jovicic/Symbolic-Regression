@@ -7,8 +7,8 @@ from expression import *
 from GeneticProgramming.randomTreeGenerator import *
 from GeneticProgramming.mutation import *
 
-np.random.seed(1)  # gives semantically similar individuals
-#np.random.seed(42)  # gives semantically dissimilar individuals
+#np.random.seed(1)   # gives semantically similar individuals for X_set1
+#np.random.seed(42)  # gives semantically dissimilar individuals for X_set1
 
 def main():
 
@@ -68,7 +68,7 @@ def main():
     addNodeRoot.appendLeft(divNode)
     addNodeRoot.appendRight(mulNode)
 
-    
+    """
     print("Original individual:")
     print(addNodeRoot.stringRepresentation())
     print(addNodeRoot.value(X_set0))
@@ -92,7 +92,7 @@ def main():
     print(addNodeRoot.stringRepresentation())
     print(addNodeRoot.value(X_set0))
     print()
-    
+    """
 
     
     x0 = VariableNode(0)
@@ -108,11 +108,15 @@ def main():
     parent2 = MulNode()
     parent2.appendLeft(logNode)
     parent2.appendRight(divNode2)
-    print("addNodeRoot", addNodeRoot.stringRepresentation())
+
+    """
+    print("parent1", addNodeRoot.stringRepresentation())
     print("parent2", parent2.stringRepresentation())
     crossoverChild1 = subtreeCrossoverOneCild(addNodeRoot, parent2)
     print("crossoverChild1", crossoverChild1.stringRepresentation())
+    """
 
+    print()
     print("Original individual1:")
     print(addNodeRoot.stringRepresentation())
     print("Original individual2:")
@@ -120,10 +124,9 @@ def main():
     print()
     
     child1, child2 = subtreeCrossover(addNodeRoot, parent2)
-    print("child1")
-    print(child1.stringRepresentation())
-    print("child2")
-    print(child2.stringRepresentation())
+    print("child1: ", child1.stringRepresentation())
+    print("child1: ", child2.stringRepresentation())
+    print()
     print("Original individual1:")
     print(addNodeRoot.stringRepresentation())
     print("Original individual2:")
@@ -153,7 +156,7 @@ def main():
         y_set1 = np.array([((np.cos(X_set1[i][1]) / (X_set1[i][0] + X_set1[i][1])) + (np.sin(X_set1[i][0]) * X_set1[i][2]))])
     y_set1 = np.array(y_set1)
     
-    fitnessFunction = FitnessFunction(X_set1, y_set1, 'mse')
+    fitnessFunction = FitnessFunction(X_set0, y_set0, 'mse')
 
     child1, child2 = SSC(addNodeRoot, parent2, fitnessFunction.X_train, 1e-4, 0.4, 1)
 

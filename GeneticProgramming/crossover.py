@@ -38,14 +38,71 @@ def subtreeCrossoverOneCild(individual1, individual2):
     return parent1
 
 
+def swapSubtrees(subtree1, subtree2, child1, child2):
+
+    #print("child1: ", child1.stringRepresentation())
+    #print("child2: ", child2.stringRepresentation())
+
+    p1 = subtree1.parent
+    #print(p1)
+    #print("p1", p1.stringRepresentation())
+
+    p2 = subtree2.parent
+    #print(p2)
+    #print("p2", p2.stringRepresentation())
+
+    if not p1:
+        child1 = subtree2
+
+    if not p2:
+        child2 = subtree1
+
+    #print("child1: ", child1.stringRepresentation())
+    #print("child2: ", child2.stringRepresentation())
+
+    if p1:
+        if p1.left == subtree1:
+            p1.left = subtree2
+            subtree2.parent = p1
+            if p2:
+                if p2.left == subtree2:
+                    p2.left = subtree1
+                    subtree1.parent = p2
+                else:
+                    p2.right = subtree1
+                    subtree1.parent = p2
+
+        else:
+            p1.right = subtree2
+            subtree2.parent = p1
+            if p2:
+                if p2.left == subtree2:
+                    p2.left = subtree1
+                    subtree1.parent = p2
+                else:
+                    p2.right = subtree1
+                    subtree1.parent = p2
+
+    else:
+        if p2:
+            if p2.left == subtree2:
+                p2.left = subtree1
+                subtree1.parent = p2
+            elif p2.right == subtree2:
+                p2.right = subtree1
+                subtree1.parent = p2
+
+
+    return child1, child2
+
 
 def subtreeCrossover(individual1, individual2):
 
-    parent1 = deepcopy(individual1)
-    parent2 = deepcopy(individual2)
+    child1 = deepcopy(individual1)
+    child2 = deepcopy(individual2)
 
-    nodes1 = parent1.subtrees()
-    nodes2 = parent2.subtrees()
+    nodes1 = child1.subtrees()
+    nodes2 = child2.subtrees()
 
     #print("nodes1", nodes1)
     #print("nodes2", nodes2)
@@ -54,47 +111,16 @@ def subtreeCrossover(individual1, individual2):
     nodes2 = candidateNodesAtRandomDepth(nodes2)
 
     toSwap1 = nodes1[randint(len(nodes1))]
-    #print("toSwap1", toSwap1.stringRepresentation())
+    print("toSwap1", toSwap1.stringRepresentation())
     toSwap2 = nodes2[randint(len(nodes2))]
-    #print("toSwap2", toSwap2.stringRepresentation())
+    print("toSwap2", toSwap2.stringRepresentation())
 
-    p1 = toSwap1.parent
-    #print("p1", p1.stringRepresentation())
+    child1, child2 = swapSubtrees(toSwap1, toSwap2, child1, child2)
 
-    p2 = toSwap2.parent
-    #print("p2", p2.stringRepresentation())
-
-    if not p1:
-        parent1 = toSwap2
-
-    if not p2:
-        parent2 = toSwap1
-
-    if p1:
-        if p1.left == toSwap1:
-            p1.left = toSwap2
-            toSwap2.parent = p1
-            if p2:
-                if p2.left == toSwap2:
-                    p2.left = toSwap1
-                    toSwap1.parent = p2
-                else:
-                    p2.right = toSwap1
-                    toSwap1.parent = p2
-
-        else:
-            p1.right = toSwap2
-            toSwap2.parent = p1
-            if p2:
-                if p2.left == toSwap2:
-                    p2.left = toSwap1
-                    toSwap1.parent = p2
-                else:
-                    p2.right = toSwap1
-                    toSwap1.parent = p2
+    return child1, child2
 
 
-    return parent1, parent2
+
 
 
 # ------------------------------------------
@@ -145,10 +171,17 @@ def SSC(individual1, individual2, X, LBSS, UBSS, maxTrials):
         # Semantic Similarity
         SS = LBSS < SSD < UBSS
         print("Semantic Similarity: ", SS)
+        print()
 
 
         if SS:
 
+            child1, child2 = swapSubtrees(subtree1, subtree2, child1, child2)
+
+            #print("child1: ", child1.stringRepresentation())
+            #print("child2: ", child2.stringRepresentation())
+
+            """
             # execute crossover
             p1 = subtree1.parent
             #print("p1", p1.stringRepresentation())
@@ -184,13 +217,14 @@ def SSC(individual1, individual2, X, LBSS, UBSS, maxTrials):
                         else:
                             p2.right = subtree1
                             subtree1.parent = p2
-
+            """
 
             crossoverExecuted = True
             break
 
 
     if not crossoverExecuted:
+        print("Executing random subtree crossover")
         child1, child2 = subtreeCrossover(individual1, individual2)
 
 
