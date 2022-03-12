@@ -11,3 +11,9 @@ REPODUCTION_SIZE: 15
 FUNCTIONS: ['add', 'sub', 'mul', 'div']
 ERROR_EPSILON: 0.0000000001
 ERROR_TYPE: 'normalizedAdjusted'
+NUM_RUNS: 5
+SSC: 
+  USE_SSC: True
+  LBSS: 0.00001
+  UBSS: 0.6
+  MAX_TRIALS: 100

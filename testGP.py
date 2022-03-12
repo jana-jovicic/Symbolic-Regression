@@ -56,7 +56,6 @@ def main():
 	parser.add_argument("--GPtype", type=str, default='basic', help='type of GP algorithm')
 	parser.add_argument("--config", type=str, default='./configs/gp.yaml', help='path to configuration file')
 	parser.add_argument('--datapointsFile', default='generatedDatasets/f1.txt', type=str, help='path to file that contains datapoints')
-	parser.add_argument("--nRuns", type=int, default=1, help='number of runs of GP algorithm')
 	args = parser.parse_args()
 
 	cfg = getConfig(args.config)
@@ -68,18 +67,32 @@ def main():
 	errorType = cfg['ERROR_TYPE']
 
 	# Initalize GP estimator
+
+
 	gpEstimator = GeneticProgrammingSymbolicRegressionEstimator(populationSize=cfg['POPULATION_SIZE'], maxGenerations=cfg['MAX_GENERATIONS'], 
 		verbose=cfg['VERBOSE'], maxTreeSize=cfg['MAX_TREE_SIZE'], mutationRate=cfg['MUTATION_RATE'], opMutationRate=cfg['OP_MUTATION_RATE'], 
 		minHeight=cfg['MIN_HEIGHT'], initializationMaxTreeHeight=cfg['INITIALIZATION_MAX_TREE_HEIGHT'], 
-		tournamentSize=cfg['TOURNAMENT_SIZE'], reproductionSize=cfg['REPODUCTION_SIZE'], errorType=errorType, errorEpsilon=cfg['ERROR_EPSILON'], functions = fs)
+		tournamentSize=cfg['TOURNAMENT_SIZE'], reproductionSize=cfg['REPODUCTION_SIZE'], 
+		errorType=errorType, errorEpsilon=cfg['ERROR_EPSILON'], functions = fs,
+		useSSC = cfg['SSC']['USE_SSC'],
+		sscLBSS = cfg['SSC']['LBSS'],
+		sscUBSS = cfg['SSC']['UBSS'],
+		sscMaxTrials = cfg['SSC']['MAX_TRIALS'])
 
+	
 	X, y = loadDataset(args.datapointsFile)
-	print(X[:5])
-	print(y[:5])
+	print('Xs', X[:5])
+	print('ys', y[:5])
 
 	X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-	dir = './GeneticProgramming/results/basicGP'
+	dir = './GeneticProgramming/results/'
+
+	if cfg['SSC']['USE_SSC']:
+		dir += 'SSC'
+	else:
+		dir += 'basicGP'
+
 	if not os.path.exists(dir):
 		os.makedirs(dir)
 	resFile = args.datapointsFile[args.datapointsFile.rfind(os.path.sep) : ]
@@ -87,7 +100,6 @@ def main():
 	open(resFile, 'w').close()
 
 	csvFile = resFile[: resFile.rfind('.')] + '.csv'
-	print(csvFile)
 	open(csvFile, 'w').close()
 	header = ['Run', 'TrainError', 'TestError', 'BestIndividual', 'GenerationOfBestSolution', 'Time']
 	# dodati symbolicEquivalence (pomocu sympy)
@@ -97,15 +109,20 @@ def main():
 		writer.writerow(header)
 
 	with open(resFile, 'a+') as file:
-			file.write('Population size: ' + str(cfg['POPULATION_SIZE']) + '\n')
-			file.write('Max number of generations: ' + str(cfg['MAX_GENERATIONS']) + '\n')
-			file.write('Reproduction size: ' + str(cfg['REPODUCTION_SIZE']) + '\n')
-			file.write('Mutation rate: ' + str(cfg['MUTATION_RATE']) + '\n')
-			file.write('One point mutation rate: ' + str(cfg['OP_MUTATION_RATE']) + '\n')
-			file.write('Error type: ' + str(errorType) + '\n')
+		file.write('Population size: ' + str(cfg['POPULATION_SIZE']) + '\n')
+		file.write('Max number of generations: ' + str(cfg['MAX_GENERATIONS']) + '\n')
+		file.write('Reproduction size: ' + str(cfg['REPODUCTION_SIZE']) + '\n')
+		file.write('Mutation rate: ' + str(cfg['MUTATION_RATE']) + '\n')
+		file.write('One point mutation rate: ' + str(cfg['OP_MUTATION_RATE']) + '\n')
+		file.write('Error type: ' + str(errorType) + '\n')
+		if cfg['SSC']['USE_SSC']:
+			file.write('LBSS: ' + str(cfg['SSC']['LBSS']) + '\n')
+			file.write('UBSS: ' + str(cfg['SSC']['UBSS']) + '\n')
+			file.write('Max trials: ' + str(cfg['SSC']['MAX_TRIALS']) + '\n')
 
 
-	for run in range(args.nRuns):
+
+	for run in range(cfg['NUM_RUNS']):
 
 		startTime = round(time.time() * 1000)
 

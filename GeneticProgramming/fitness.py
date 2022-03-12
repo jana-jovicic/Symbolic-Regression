@@ -37,7 +37,7 @@ class FitnessFunction:
 		output = individual.value(self.X_train)
 		#print("output", output)
 
-		fit = -1
+		fit = np.inf
 
 		if self.errorType == 'mse':
 			fit = mse(self.y_train, output)

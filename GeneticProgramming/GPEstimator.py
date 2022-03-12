@@ -25,7 +25,11 @@ class GeneticProgrammingSymbolicRegressionEstimator(BaseEstimator, RegressorMixi
 		reproductionSize = 200,
 		errorType = 'mse',
 		errorEpsilon = 1e-10,
-		verbose = False):
+		verbose = False,
+		useSSC = False,
+		sscLBSS = 1e-4,
+		sscUBSS = 0.4,
+		sscMaxTrials = 10):
 		
 		args, _, _, values = inspect.getargvalues(inspect.currentframe())
 		values.pop('self')
@@ -58,7 +62,11 @@ class GeneticProgrammingSymbolicRegressionEstimator(BaseEstimator, RegressorMixi
 			reproductionSize = self.reproductionSize,
 			errorType = self.errorType,
 			errorEpsilon = self.errorEpsilon,
-			verbose = self.verbose)
+			verbose = self.verbose,
+			useSSC = self.useSSC,
+			sscLBSS = self.sscLBSS,
+			sscUBSS = self.sscUBSS,
+			sscMaxTrials = self.sscMaxTrials)
 
 		gp.run()
 		self.gp = gp

@@ -1,5 +1,5 @@
 import inspect
-from GeneticProgramming.crossover import subtreeCrossover
+from GeneticProgramming.crossover import SSC, subtreeCrossover
 from GeneticProgramming.fitness import adjustedFitness
 from GeneticProgramming.mutation import subtreeMutation, onePointMutation
 from GeneticProgramming.randomTreeGenerator import generateRandomTree
@@ -29,7 +29,11 @@ class GP:
         reproductionSize = 200,
         errorType = 'mse',
         errorEpsilon = 1e-10,
-        verbose = False):
+        verbose = False,
+        useSSC = False,
+        sscLBSS = 1e-4,
+		sscUBSS = 0.4,
+		sscMaxTrials = 10):
 
         args, _, _, values = inspect.getargvalues(inspect.currentframe())
         values.pop('self')
@@ -88,7 +92,11 @@ class GP:
         while len(offsprings) < self.populationSize:
 
             parents = np.random.choice(individualsForReproduction, 2)
-            child1, child2 = subtreeCrossover(parents[0], parents[1])
+
+            if self.useSSC:
+                child1, child2 = SSC(parents[0], parents[1], self.fitnessFunction.X_train, self.sscLBSS, self.sscUBSS, self.sscMaxTrials)
+            else:
+                child1, child2 = subtreeCrossover(parents[0], parents[1])
 
             if random() < self.mutationRate:
                 child1 = subtreeMutation(child1, self.functions, self.terminals, maxHeight=self.initializationMaxTreeHeight, minHeight=self.minHeight)
@@ -154,5 +162,7 @@ class GP:
     def calculateAdjustedFitnesses(self, population):
         sumAdjFit = 0
         for individual in population:
+            print(individual.stringRepresentation())
             sumAdjFit = sumAdjFit + adjustedFitness(self.fitnessFunction.y_train, individual.value(self.fitnessFunction.X_train))
+            print('sumAdjFit', sumAdjFit)
         return sumAdjFit
