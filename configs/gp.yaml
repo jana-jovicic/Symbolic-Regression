@@ -10,7 +10,7 @@ TOURNAMENT_SIZE: 4
 REPODUCTION_SIZE: 15
 FUNCTIONS: ['add', 'sub', 'mul', 'div']
 ERROR_EPSILON: 0.0000000001
-ERROR_TYPE: 'normalizedAdjusted'
+ERROR_TYPE: 'mse'
 NUM_RUNS: 5
 SSC: 
   USE_SSC: True
