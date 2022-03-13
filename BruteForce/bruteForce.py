@@ -48,19 +48,30 @@ class BruteForce():
         for i in range(nVariables):
             terminals.append(VariableNode(i))
             nextHeightTerminals.append(VariableNode(i))
-        print(terminals)
+        print("terminals", terminals)
+        print(type(terminals))
 
+        """
         terminalPermutations = []
         if nVariables > 1:
-            for pair in itertools.permutations(terminals, 2):
+            for pair in itertools.product(terminals, repeat=2):
                 terminalPermutations.append(pair)
+                print(pair)
+        """
+
+
 
         height = 0
 
         while True:
 
-            print('------------------')
+            
             print("height", height)
+
+            terminalPermutations = []
+            for pair in itertools.product(terminals, repeat=2):
+                terminalPermutations.append(pair)
+                print("pair", pair[0].stringRepresentation(),  pair[1].stringRepresentation())
 
             foundSolution, solution, functions = self.buildTree(terminalPermutations)
             print('foundSolution', foundSolution)
@@ -76,17 +87,22 @@ class BruteForce():
 
             
             for function in functions:
-                terminals.append(function)
+                terminals.append(deepcopy(function))
 
             for term in terminals:
-                print(term.stringRepresentation())
+                print("term", term.stringRepresentation())
 
-            nextHeightTerminalPermutations = []
-            for pair in itertools.permutations(terminals, 2):
+            """
+            terminalPermutations = []
+            for pair in itertools.product(terminals, repeat=2):
                     terminalPermutations.append(pair)
+            """
 
-            for pair in terminalPermutations:
-                print(pair[0].stringRepresentation(),  pair[1].stringRepresentation())
+            #for pair in terminalPermutations:
+            #    print("pair", pair[0].stringRepresentation(),  pair[1].stringRepresentation())
+
+
+            print('------------------')
         
         
 
