@@ -43,9 +43,11 @@ class BruteForce():
         """
 
         terminals = []
+        nextHeightTerminals = []
         nVariables = self.X.shape[1]
         for i in range(nVariables):
             terminals.append(VariableNode(i))
+            nextHeightTerminals.append(VariableNode(i))
         print(terminals)
 
         terminalPermutations = []
@@ -53,19 +55,67 @@ class BruteForce():
             for pair in itertools.permutations(terminals, 2):
                 terminalPermutations.append(pair)
 
+        height = 0
 
+        while True:
+
+            print('------------------')
+            print("height", height)
+
+            foundSolution, solution, functions = self.buildTree(terminalPermutations)
+            print('foundSolution', foundSolution)
+            print('solution', solution)
+            #print('functions', functions)
+
+            # -----------
+            # just for debug
+            height += 1
+            if height == 3:
+                break
+            # ----------
+
+            
+            for function in functions:
+                terminals.append(function)
+
+            for term in terminals:
+                print(term.stringRepresentation())
+
+            nextHeightTerminalPermutations = []
+            for pair in itertools.permutations(terminals, 2):
+                    terminalPermutations.append(pair)
+
+            for pair in terminalPermutations:
+                print(pair[0].stringRepresentation(),  pair[1].stringRepresentation())
+        
+        
+
+        """
         # height = 1
         foundSolution = False
         solution = ''
 
         for func in self.functions:
             print(func)
-            for pair in terminalPermutations:
+            n = len(terminalPermutations)
+            #for pair in terminalPermutations:
+            for i in range(n):
+                pair = terminalPermutations[i]
                 func.appendLeft(deepcopy(pair[0]))
-                func.appendRight(deepcopy(pair[1]))
+
+                if func.arity == 1:
+                    #print(pair)
+                    #print(terminalPermutations[i-1])
+                    if pair[0] == terminalPermutations[i-1][0]:
+                        print("same")
+                        continue
+
+                if func.arity > 1:
+                    func.appendRight(deepcopy(pair[1]))
                 print(func.stringRepresentation())
                 y_pred = func.value(self.X)
-                print(func.value(self.X)[:5])
+                y_pred = [np.inf if np.isnan(y) else y for y in y_pred]
+                print(y_pred[:5])
                 err = self.mse(self.y, y_pred)
                 print("mse", err)
                 if err < self.errorEpsilon:
@@ -76,6 +126,52 @@ class BruteForce():
             if foundSolution:
                 break
 
-        print("solution", solution)
+        print("solution:", solution)
         if solution != '':
-            print("solution", solution.stringRepresentation())
+            print("solution:", solution.stringRepresentation())
+        """
+
+
+    
+    def buildTree(self, terminalPermutations):
+
+        functions = []
+        foundSolution = False
+        solution = ''
+
+        for func in self.functions:
+            #print(func)
+            n = len(terminalPermutations)
+            #for pair in terminalPermutations:
+            for i in range(n):
+                pair = terminalPermutations[i]
+                func.appendLeft(deepcopy(pair[0]))
+
+                if func.arity == 1:
+                    #print(pair)
+                    #print(terminalPermutations[i-1])
+                    if pair[0] == terminalPermutations[i-1][0]:
+                        #print("same")
+                        continue
+
+                if func.arity > 1:
+                    func.appendRight(deepcopy(pair[1]))
+                #print(func.stringRepresentation())
+
+                functions.append(deepcopy(func))
+
+                y_pred = func.value(self.X)
+                y_pred = [np.inf if np.isnan(y) else y for y in y_pred]
+                #print(y_pred[:5])
+                err = self.mse(self.y, y_pred)
+                #print("mse", err)
+                if err < self.errorEpsilon:
+                    foundSolution = True
+                    solution = func
+                    break
+
+            if foundSolution:
+                break
+
+        return foundSolution, solution, functions
+            
