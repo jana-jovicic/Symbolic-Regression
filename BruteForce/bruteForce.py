@@ -71,7 +71,7 @@ class BruteForce():
             terminalPermutations = []
             for pair in itertools.product(terminals, repeat=2):
                 terminalPermutations.append(pair)
-                print("pair", pair[0].stringRepresentation(),  pair[1].stringRepresentation())
+                #print("pair:", pair[0].stringRepresentation(), ", ", pair[1].stringRepresentation())
 
             foundSolution, solution, functions = self.buildTree(terminalPermutations)
             print('foundSolution', foundSolution)
@@ -87,7 +87,18 @@ class BruteForce():
 
             
             for function in functions:
-                terminals.append(deepcopy(function))
+                if any(terminal.stringRepresentation() == function.stringRepresentation() for terminal in terminals):
+                    continue
+                else:
+                    terminals.append(deepcopy(function))
+                    """
+                    print(function.stringRepresentation())
+                    print(terminals[2].stringRepresentation())
+                    print(function == terminals[2])
+                    print(function.stringRepresentation() == terminals[2].stringRepresentation())
+                    print('//////////')
+                    """
+                    
 
             for term in terminals:
                 print("term", term.stringRepresentation())
