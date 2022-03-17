@@ -52,7 +52,16 @@ def main():
 		errorType = cfg['ERROR_TYPE'],
 		errorEpsilon = cfg['ERROR_EPSILON'],
         maxHours = cfg['MAX_HOURS'])
-    bp.run()
+    
+    foundExactSolution, exactSolution, exactSolutionError, nearestBestSolution, nearestBestSolutionError = bp.run()
+
+    print("foundExactSolution", foundExactSolution)
+    if foundExactSolution:
+        print("exactSolution", exactSolution.stringRepresentation())
+        print("exactSolutionError", exactSolutionError)
+
+    print("nearestBestSolution", nearestBestSolution.stringRepresentation())
+    print("nearestBestSolutionError", nearestBestSolutionError)
 
 
 if __name__ == "__main__":
