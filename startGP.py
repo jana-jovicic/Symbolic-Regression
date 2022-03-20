@@ -124,11 +124,11 @@ def main():
 
 	for run in range(cfg['NUM_RUNS']):
 
-		startTime = round(time.time() * 1000)
+		startTime = round(time.time())
 
 		gpEstimator.fit(X_train, y_train)
 
-		endTime = round(time.time() * 1000) - startTime
+		endTime = round(time.time()) - startTime
 
 		bestIndividual = gpEstimator.getBest()
 		bestStr = bestIndividual.stringRepresentation()

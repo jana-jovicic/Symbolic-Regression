@@ -268,7 +268,7 @@ class PowNode(Node):
         return '^'
 
     def stringRepresentationSpecificNode(self, args):
-        return '(' + args[0] + '^(' + args[0] + '))'
+        return '(' + args[0] + '**(' + args[1] + '))'
 
     def value(self, X):
         valLeft = self.left.value(X)

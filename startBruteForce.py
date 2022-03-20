@@ -2,8 +2,9 @@ import csv
 import time
 import os, argparse
 import numpy as np
-from numpy.random import randint
-from numpy.random import random
+
+from sympy import simplify
+from sympy.parsing.sympy_parser import parse_expr
 
 from expression import *
 from BruteForce.bruteForce import BruteForce
@@ -31,6 +32,7 @@ def main():
     parser = argparse.ArgumentParser(description='GP')
     parser.add_argument("--config", type=str, default='./configs/gp.yaml', help='path to configuration file')
     parser.add_argument('--datapointsFile', default='generatedDatasets/f1.txt', type=str, help='path to file that contains datapoints')
+    parser.add_argument('--realEquation', default='generatedDatasets/f1_solution.txt', type=str, help='path to file that contains exact solution')
     args = parser.parse_args()
 
     cfg = getConfig(args.config)
@@ -42,8 +44,18 @@ def main():
     errorType = cfg['ERROR_TYPE']
 
     X, y = loadDataset(args.datapointsFile)
-    print('Xs', X[:5])
-    print('ys', y[:5])
+   
+    dir = './BruteForce/results/'
+    if not os.path.exists(dir):
+        os.makedirs(dir)
+
+    resFile = args.datapointsFile[args.datapointsFile.rfind(os.path.sep) : ]
+    resFile = dir + resFile
+    
+    csvFile = resFile[: resFile.rfind('.')] + '.csv'
+    open(csvFile, 'w').close()
+    header = ['realEquation', 'foundExactSolution', 'exactSolution', 'sympyEquivalence', 'nearestBestSolution', 'nearestBestSolutionError', 'Time (h:m:s)', 'maxGivenHours']
+    # dodati symbolicEquivalence (pomocu sympy)
 
 
     bp = BruteForce(X, y, 
@@ -52,16 +64,64 @@ def main():
 		errorType = cfg['ERROR_TYPE'],
 		errorEpsilon = cfg['ERROR_EPSILON'],
         maxHours = cfg['MAX_HOURS'])
+
+    startTime = round(time.time())
     
     foundExactSolution, exactSolution, exactSolutionError, nearestBestSolution, nearestBestSolutionError = bp.run()
 
-    print("foundExactSolution", foundExactSolution)
-    if foundExactSolution:
-        print("exactSolution", exactSolution.stringRepresentation())
-        print("exactSolutionError", exactSolutionError)
+    executionTime = round(time.time()) - startTime
 
-    print("nearestBestSolution", nearestBestSolution.stringRepresentation())
-    print("nearestBestSolutionError", nearestBestSolutionError)
+    hours, rem = divmod(executionTime, 3600)
+    minutes, seconds = divmod(rem, 60)
+    executionTimeFormated = '{:0>2}:{:0>2}:{:05.2f}'.format(int(hours), int(minutes), seconds)
+
+    data = []
+
+    if args.realEquation:
+        with open(args.realEquation) as file:
+            realEquationSympy = parse_expr(file.readline())
+            data.append(realEquationSympy)
+
+    #print("foundExactSolution", foundExactSolution)
+    if foundExactSolution:
+        #print("exactSolution", exactSolution.stringRepresentation())
+        #print("exactSolutionError", exactSolutionError)
+
+        data.append(str(foundExactSolution))
+        data.append(exactSolution.stringRepresentation())
+
+        # check with sympy if it is exactly equivalent
+        print(args.realEquation)
+        print(args.realEquation == True)
+        if args.realEquation:
+            exactSolutionSympy = parse_expr(exactSolution.stringRepresentation())
+            print("realEquationSympy",realEquationSympy)
+            equationsDiff = exactSolutionSympy - realEquationSympy
+            print("equationsDiff", equationsDiff)   
+            diffSimplified = simplify(equationsDiff)
+            print("diffSimplified simplified", diffSimplified)  
+            data.append(str(diffSimplified == 0))
+        else:
+            data.append('/')
+
+        
+    else:
+        data.append('False')
+        data.append('/')
+        data.append('/')
+    data.append(nearestBestSolution.stringRepresentation())
+    data.append(str(nearestBestSolutionError))
+
+    data.append(str(executionTimeFormated))
+    data.append(str(cfg['MAX_HOURS']))
+
+    #print("nearestBestSolution", nearestBestSolution.stringRepresentation())
+    #print("nearestBestSolutionError", nearestBestSolutionError)
+
+    with open(csvFile, 'a+', encoding='UTF8') as file:
+        writer = csv.writer(file)
+        writer.writerow(header)
+        writer.writerow(data)
 
 
 if __name__ == "__main__":

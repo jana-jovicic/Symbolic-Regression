@@ -1,9 +1,8 @@
+import time
 import inspect
 import itertools
 import numpy as np
 from copy import deepcopy
-from numpy.random import randint
-from numpy.random import random
 
 from expression import *
 
@@ -19,8 +18,6 @@ class BruteForce():
 		errorType = 'mse',
 		errorEpsilon = 1e-10,
         maxHours = 1):
-
-        
 
         args, _, _, values = inspect.getargvalues(inspect.currentframe())
         values.pop('self')
@@ -50,17 +47,23 @@ class BruteForce():
 
         height = 0
 
+        self.startTime = time.time()
+
         while True:
 
             
-            print("height", height)
+            print("height of the current trees: ", height)
 
             terminalPermutations = []
             for pair in itertools.product(terminals, repeat=2):
                 terminalPermutations.append(pair)
                 #print("pair:", pair[0].stringRepresentation(), ", ", pair[1].stringRepresentation())
 
-            foundExactSolution, exactSolution, exactSolutionErr, functions = self.buildTree(terminalPermutations)
+            foundExactSolution, exactSolution, exactSolutionErr, functions, maxTimeExceeded = self.buildTree(terminalPermutations)
+
+            if maxTimeExceeded:
+                break 
+
             print('foundSolution', foundExactSolution)
             if foundExactSolution:
                 print('solution', exactSolution.stringRepresentation())
@@ -72,13 +75,20 @@ class BruteForce():
             # -----------
             # just for debug
             height += 1
-            if height == 3:
-                break
+            #if height == 3:
+                #break
             # ----------
             
 
             
             for function in functions:
+
+                hours, rem = divmod(time.time() - self.startTime, 3600)
+                minutes, seconds = divmod(rem, 60)
+                print("minutes passed: ", minutes)
+                if hours >= self.maxHours:
+                    break
+
                 if any(terminal.stringRepresentation() == function.stringRepresentation() for terminal in terminals):
                     continue
                 else:
@@ -89,10 +99,11 @@ class BruteForce():
             #for term in terminals:
                 #print("term", term.stringRepresentation())
 
-            
+            print("Generating permutations...")
             terminalPermutations = []
             for pair in itertools.product(terminals, repeat=2):
-                    terminalPermutations.append(pair)
+                terminalPermutations.append(pair)
+            print("Finished Generating permutations")
             
 
             #for pair in terminalPermutations:
@@ -118,9 +129,17 @@ class BruteForce():
 
         for func in self.functions:
             #print(func)
+
             n = len(terminalPermutations)
             #for pair in terminalPermutations:
             for i in range(n):
+
+                hours, rem = divmod(time.time() - self.startTime, 3600)
+                minutes, seconds = divmod(rem, 60)
+                print("minutes passed: ", minutes)
+                if hours >= self.maxHours:
+                    return False, '', '', functions, True
+
                 pair = terminalPermutations[i]
                 func.appendLeft(deepcopy(pair[0]))
 
@@ -137,18 +156,18 @@ class BruteForce():
 
                 functions.append(deepcopy(func))
 
-                y_pred = func.value(self.X)
-                y_pred = [np.inf if np.isnan(y) else y for y in y_pred]
+                yPred = func.value(self.X)
+                yPred = [np.inf if np.isnan(y) else y for y in yPred]
                 #print(y_pred[:5])
-                err = self.mse(self.y, y_pred)
+                err = self.mse(self.y, yPred)
                 #print("mse", err)
 
                 if err < self.currentBestSolutionError:
                     self.currentBestSolution = func
                     self.currentBestSolutionError = err
                     
-                print(self.currentBestSolution.stringRepresentation())
-                print(self.currentBestSolutionError)
+                #print(self.currentBestSolution.stringRepresentation())
+                #print(self.currentBestSolutionError)
 
                 if err < self.errorEpsilon:
                     foundExactSolution = True
@@ -162,5 +181,5 @@ class BruteForce():
             if foundExactSolution:
                 break
 
-        return foundExactSolution, exactSolution, exactSolutionErr, functions
+        return foundExactSolution, exactSolution, exactSolutionErr, functions, False
             

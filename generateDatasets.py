@@ -6,8 +6,14 @@ dir = 'generatedDatasets/'
 
 
 def f1(numPoints):
+    # f1 = x0**3 + x0**2 + x0
+
+    filenameEquation = dir + 'f1_solution.txt'
+    open(filenameEquation, 'w').close()
+    with open(filenameEquation, 'w') as file:
+        file.write('x0**3 + x0**2 + x0')
+
     filename = dir+'f1.txt'
-    open(filename, 'w').close()
     for i in range(numPoints):
         x = np.random.random()*2 - 1
         f = x**3 + x**2 + x
@@ -19,32 +25,44 @@ def f1(numPoints):
 
 
 def f2(numPoints):
+
+    filenameEquation = dir + 'f2_solution.txt'
+    open(filenameEquation, 'w').close()
+    with open(filenameEquation, 'w') as file:
+        file.write('x0**2 + x1**2 + x2**2')
+
     filename = dir+'f2.txt'
     open(filename, 'w').close()
     for i in range(numPoints):
+        x0 = np.random.random()*2 - 1
         x1 = np.random.random()*2 - 1
         x2 = np.random.random()*2 - 1
-        x3 = np.random.random()*2 - 1
-        f = x1**2 + x2**2 + x3**2
+        f = x0**2 + x1**2 + x2**2
         #print(f)
         with open(filename, 'a+') as file:
+            file.write(str(x0)+' ')
             file.write(str(x1)+' ')
             file.write(str(x2)+' ')
-            file.write(str(x3)+' ')
             file.write(str(f))
             file.write('\n')
 
 def f3(numPoints):
+
+    filenameEquation = dir + 'f3_solution.txt'
+    open(filenameEquation, 'w').close()
+    with open(filenameEquation, 'w') as file:
+        file.write('x0**2 + x1**2')
+
     filename = dir+'f3.txt'
     open(filename, 'w').close()
     for i in range(numPoints):
+        x0 = np.random.random()*2 - 1
         x1 = np.random.random()*2 - 1
-        x2 = np.random.random()*2 - 1
-        f = x1**2 + x2**2
+        f = x0**2 + x1**2
         #print(f)
         with open(filename, 'a+') as file:
+            file.write(str(x0)+' ')
             file.write(str(x1)+' ')
-            file.write(str(x2)+' ')
             file.write(str(f))
             file.write('\n')
 
