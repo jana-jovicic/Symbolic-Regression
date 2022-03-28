@@ -8,12 +8,12 @@ MIN_HEIGHT: 2
 INITIALIZATION_MAX_TREE_HEIGHT: 4 
 TOURNAMENT_SIZE: 4
 REPODUCTION_SIZE: 15
-FUNCTIONS: ['add', 'sub', 'mul', 'div']
+FUNCTIONS: ['add', 'sub', 'mul', 'div', 'pow', 'sin', 'cos', 'log']
 ERROR_EPSILON: 0.0000000001
 ERROR_TYPE: 'mse'
 NUM_RUNS: 5
 SSC: 
-  USE_SSC: True
+  USE_SSC: False
   LBSS: 0.00001
   UBSS: 0.6
   MAX_TRIALS: 100

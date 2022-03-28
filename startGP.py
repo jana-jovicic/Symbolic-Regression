@@ -1,16 +1,19 @@
 import csv
 import time
 import os, argparse
-from GeneticProgramming.fitness import adjustedFitness, mse, normalizedAdjustedFitness, rawFitness, rmse, nrmse
 import numpy as np 
 import sklearn.datasets
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import scale
 from copy import deepcopy
 
+from sympy import simplify
+from sympy.parsing.sympy_parser import parse_expr
+
 from expression import *
 from GeneticProgramming.GP import GP
 from GeneticProgramming.GPEstimator import GeneticProgrammingSymbolicRegressionEstimator
+from GeneticProgramming.fitness import adjustedFitness, mse, normalizedAdjustedFitness, rawFitness, rmse, nrmse
 from util.yamlParser import getConfig
 
 np.random.seed(42)
@@ -53,9 +56,10 @@ def main():
 	"""
 
 	parser = argparse.ArgumentParser(description='GP')
-	parser.add_argument("--GPtype", type=str, default='basic', help='type of GP algorithm')
+	#parser.add_argument("--GPtype", type=str, default='basic', help='type of GP algorithm')
 	parser.add_argument("--config", type=str, default='./configs/gp.yaml', help='path to configuration file')
 	parser.add_argument('--datapointsFile', default='generatedDatasets/f1.txt', type=str, help='path to file that contains datapoints')
+	parser.add_argument('--realEquation', default='generatedDatasets/f1_solution.txt', type=str, help='path to file that contains exact solution')
 	args = parser.parse_args()
 
 	cfg = getConfig(args.config)
@@ -101,7 +105,7 @@ def main():
 
 	csvFile = resFile[: resFile.rfind('.')] + '.csv'
 	open(csvFile, 'w').close()
-	header = ['Run', 'TrainError', 'TestError', 'BestIndividual', 'GenerationOfBestSolution', 'Time']
+	header = ['Run', 'TrainError', 'TestError', 'BestIndividual', 'GenerationOfBestSolution', 'Time', 'SympyEquivalence']
 	# dodati symbolicEquivalence (pomocu sympy)
 
 	with open(csvFile, 'w', encoding='UTF8') as file:
@@ -122,6 +126,11 @@ def main():
 
 
 
+	if args.realEquation:
+		with open(args.realEquation) as file:
+			realEquationSympy = parse_expr(file.readline())
+
+
 	for run in range(cfg['NUM_RUNS']):
 
 		startTime = round(time.time())
@@ -133,6 +142,11 @@ def main():
 		bestIndividual = gpEstimator.getBest()
 		bestStr = bestIndividual.stringRepresentation()
 		print('Best individual:', bestStr)
+
+		bestIndividualSympy = parse_expr(bestStr)
+		equationsDiff = bestIndividualSympy - realEquationSympy
+		diffSimplified = simplify(equationsDiff)
+		sympyEquivalence = str(diffSimplified == 0)
 
 		y_train_pred = gpEstimator.predict(X_train)
 		y_test_pred = gpEstimator.predict(X_test)
@@ -171,6 +185,8 @@ def main():
 
 		generationOfBestSolution = gpEstimator.gp.generations
 		data = [run, trainErr, testErr, bestStr, generationOfBestSolution, endTime]
+		if args.realEquation:
+			data.append(sympyEquivalence)
 		with open(csvFile, 'a+', encoding='UTF8') as file:
 			writer = csv.writer(file)
 			writer.writerow(data)

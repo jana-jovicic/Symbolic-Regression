@@ -1,4 +1,4 @@
 python startGP.py \
-    --GPtype basic \
     --config ./configs/gp.yaml \
-    --datapointsFile generatedDatasets/f1.txt
+    --datapointsFile generatedDatasets/f1.txt \
+    --realEquation generatedDatasets/f2_solution.txt

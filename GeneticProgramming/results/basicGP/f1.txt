@@ -3,4 +3,4 @@ Max number of generations: 20
 Reproduction size: 15
 Mutation rate: 0.3
 One point mutation rate: 0.3
-Error type: normalizedAdjusted
+Error type: mse
