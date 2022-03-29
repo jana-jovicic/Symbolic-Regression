@@ -10,6 +10,10 @@ def rmse(y_real, y_pred):
 def nrmse(y_real, y_pred):
 	return np.sqrt(np.mean(np.square(y_real - y_pred))) / (np.max(y_real) - np.min(y_real))
 
+def r2Score(y_real, y_pred):
+	return 1 - mse(y_real, y_pred) / np.var(y_real)
+	
+
 def rawFitness(y_real, y_pred):
 	return np.sum(np.abs(y_real - y_pred))
 
@@ -19,6 +23,8 @@ def adjustedFitness(y_real, y_pred):
 
 def normalizedAdjustedFitness(y_real, y_pred, sumAdjustedFitnesses):
 	return adjustedFitness(y_real, y_pred) / sumAdjustedFitnesses
+
+
 
 class FitnessFunction:
 

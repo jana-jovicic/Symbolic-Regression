@@ -2,7 +2,7 @@ import csv
 import time
 import os, argparse
 import numpy as np 
-from sklearn.metrics import r2_score
+#from sklearn.metrics import r2_score
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import scale
 from copy import deepcopy
@@ -13,7 +13,7 @@ from sympy.parsing.sympy_parser import parse_expr
 from expression import *
 from GeneticProgramming.GP import GP
 from GeneticProgramming.GPEstimator import GeneticProgrammingSymbolicRegressionEstimator
-from GeneticProgramming.fitness import mse, rmse, nrmse
+from GeneticProgramming.fitness import mse, r2Score, rmse, nrmse
 from util.yamlParser import getConfig
 
 np.random.seed(42)
@@ -166,8 +166,8 @@ def main():
 			trainErr = nrmse(y_train, y_train_pred)
 			testErr = nrmse(y_test, y_test_pred)
 		elif errorType == 'r2_score':
-			trainErr = r2_score(y_train, y_train_pred)
-			testErr = r2_score(y_test, y_test_pred)
+			trainErr = r2Score(y_train, y_train_pred)
+			testErr = r2Score(y_test, y_test_pred)
 
 		if np.isnan(trainErr):
 			trainErr = np.inf
