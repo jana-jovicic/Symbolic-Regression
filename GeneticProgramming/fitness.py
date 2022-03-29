@@ -22,10 +22,10 @@ def normalizedAdjustedFitness(y_real, y_pred, sumAdjustedFitnesses):
 
 class FitnessFunction:
 
-	def __init__(self, X_train, y_train, errorType):
+	def __init__(self, X_train, y_train, fitnessType):
 		self.X_train = X_train
 		self.y_train = y_train
-		self.errorType = errorType
+		self.fitnessType = fitnessType
 		self.bestIndividual = None
 		self.evaluations = 0
 		self.sumAdjustedFitnesses = 0
@@ -36,28 +36,41 @@ class FitnessFunction:
 
 		output = individual.value(self.X_train)
 		#print("output", output)
+		#print("self.y_train", self.y_train)
 
 		fit = np.inf
 
-		if self.errorType == 'mse':
+		if self.fitnessType == 'mse':
 			fit = mse(self.y_train, output)
-		elif self.errorType == 'rmse':
+		elif self.fitnessType == 'rmse':
 			fit = rmse(self.y_train, output)
-		elif self.errorType == 'nrmse':
+		elif self.fitnessType == 'nrmse':
 			fit = nrmse(self.y_train, output)
-		elif self.errorType == 'raw':
+		elif self.fitnessType == 'raw':
 			fit = rawFitness(self.y_train, output)
-		elif self.errorType == 'adjusted':
+		elif self.fitnessType == 'adjusted':
 			fit = adjustedFitness(self.y_train, output)
-		elif self.errorType == 'normalizedAdjusted':
+		elif self.fitnessType == 'normalizedAdjusted':
 			fit = normalizedAdjustedFitness(self.y_train, output, self.sumAdjustedFitnesses)
 
-		print("fit", fit)
+
+		#print("fit", fit)
+
 		if np.isnan(fit):
-			fit = np.inf
+			if self.fitnessType == 'adjusted' or self.fitnessType == 'normalizedAdjusted':
+				fit = 0
+			else:
+				fit = np.inf
+
+		print("fit", fit)
 
 		individual.fitness = fit
 
-		if not self.bestIndividual or individual.fitness < self.bestIndividual.fitness:
+		if self.fitnessType == 'adjusted' or self.fitnessType == 'normalizedAdjusted':
+			updateBestIndividual = not self.bestIndividual or individual.fitness > self.bestIndividual.fitness
+		else:
+			updateBestIndividual = not self.bestIndividual or individual.fitness < self.bestIndividual.fitness
+
+		if updateBestIndividual:
 			del self.bestIndividual
 			self.bestIndividual = deepcopy(individual)

@@ -23,7 +23,7 @@ class GeneticProgrammingSymbolicRegressionEstimator(BaseEstimator, RegressorMixi
 		tournamentSize = 4, 
 		useLinearScaling = True, 
 		reproductionSize = 200,
-		errorType = 'mse',
+		fitnessType = 'mse',
 		errorEpsilon = 1e-10,
 		verbose = False,
 		useSSC = False,
@@ -42,7 +42,7 @@ class GeneticProgrammingSymbolicRegressionEstimator(BaseEstimator, RegressorMixi
 		self.X_ = X
 		self.y_ = y
 
-		self.fitnessFunction = FitnessFunction(X, y, self.errorType)
+		self.fitnessFunction = FitnessFunction(X, y, self.fitnessType)
 			
 		terminals = []
 		nFeatures = X.shape[1]
@@ -60,7 +60,7 @@ class GeneticProgrammingSymbolicRegressionEstimator(BaseEstimator, RegressorMixi
 			maxTreeSize = self.maxTreeSize,
 			tournamentSize = self.tournamentSize,
 			reproductionSize = self.reproductionSize,
-			errorType = self.errorType,
+			fitnessType = self.fitnessType,
 			errorEpsilon = self.errorEpsilon,
 			verbose = self.verbose,
 			useSSC = self.useSSC,

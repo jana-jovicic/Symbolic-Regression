@@ -1,10 +1,9 @@
 import random
 from GeneticProgramming.randomTreeGenerator import generateRandomTree
-from GeneticProgramming.fitness import FitnessFunction
+from GeneticProgramming.fitness import FitnessFunction, adjustedFitness
 import numpy as np
 
 from expression import *
-
 
 
 def main():
@@ -39,7 +38,7 @@ def main():
     print(addNode1.value(X_set0))
 
 
-    fitness_function = FitnessFunction(X_set1, y_set1, 'mse')
+    fitness_function = FitnessFunction(X_set1, y_set1, 'adjusted')
     fitness_function.evaluate(addNode1)
     
 

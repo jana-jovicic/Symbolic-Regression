@@ -1,6 +1,6 @@
-Population size: 25
-Max number of generations: 20
-Reproduction size: 15
+Population size: 500
+Max number of generations: 25
+Reproduction size: 300
 Mutation rate: 0.3
 One point mutation rate: 0.3
-Error type: mse
+Error type: r2_score

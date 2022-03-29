@@ -128,9 +128,9 @@ def subtreeCrossover(individual1, individual2):
     nodes2 = candidateNodesAtRandomDepth(nodes2)
 
     toSwap1 = nodes1[randint(len(nodes1))]
-    print("toSwap1", toSwap1.stringRepresentation())
+    #print("toSwap1", toSwap1.stringRepresentation())
     toSwap2 = nodes2[randint(len(nodes2))]
-    print("toSwap2", toSwap2.stringRepresentation())
+    #print("toSwap2", toSwap2.stringRepresentation())
 
     child1, child2 = swapSubtrees(toSwap1, toSwap2, child1, child2)
 

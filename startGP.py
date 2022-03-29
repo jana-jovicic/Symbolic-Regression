@@ -2,7 +2,7 @@ import csv
 import time
 import os, argparse
 import numpy as np 
-import sklearn.datasets
+from sklearn.metrics import r2_score
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import scale
 from copy import deepcopy
@@ -13,7 +13,7 @@ from sympy.parsing.sympy_parser import parse_expr
 from expression import *
 from GeneticProgramming.GP import GP
 from GeneticProgramming.GPEstimator import GeneticProgrammingSymbolicRegressionEstimator
-from GeneticProgramming.fitness import adjustedFitness, mse, normalizedAdjustedFitness, rawFitness, rmse, nrmse
+from GeneticProgramming.fitness import mse, rmse, nrmse
 from util.yamlParser import getConfig
 
 np.random.seed(42)
@@ -69,6 +69,7 @@ def main():
 	print(fs)
 
 	errorType = cfg['ERROR_TYPE']
+	fitnessType = cfg['FITNESS_TYPE']
 
 	# Initalize GP estimator
 
@@ -77,7 +78,7 @@ def main():
 		verbose=cfg['VERBOSE'], maxTreeSize=cfg['MAX_TREE_SIZE'], mutationRate=cfg['MUTATION_RATE'], opMutationRate=cfg['OP_MUTATION_RATE'], 
 		minHeight=cfg['MIN_HEIGHT'], initializationMaxTreeHeight=cfg['INITIALIZATION_MAX_TREE_HEIGHT'], 
 		tournamentSize=cfg['TOURNAMENT_SIZE'], reproductionSize=cfg['REPODUCTION_SIZE'], 
-		errorType=errorType, errorEpsilon=cfg['ERROR_EPSILON'], functions = fs,
+		fitnessType=fitnessType, errorEpsilon=cfg['ERROR_EPSILON'], functions = fs,
 		useSSC = cfg['SSC']['USE_SSC'],
 		sscLBSS = cfg['SSC']['LBSS'],
 		sscUBSS = cfg['SSC']['UBSS'],
@@ -151,6 +152,10 @@ def main():
 		y_train_pred = gpEstimator.predict(X_train)
 		y_test_pred = gpEstimator.predict(X_test)
 
+		print("X_train", X_train)
+		#print("y_train", y_train)
+		print("y_train_pred", y_train_pred)
+
 		if errorType == 'mse':
 			trainErr = mse(y_train, y_train_pred)
 			testErr = mse(y_test, y_test_pred)
@@ -160,16 +165,16 @@ def main():
 		elif errorType == 'nrmse':
 			trainErr = nrmse(y_train, y_train_pred)
 			testErr = nrmse(y_test, y_test_pred)
-		elif errorType == 'raw':
-			trainErr = rawFitness(y_train, y_train_pred)
-			testErr = rawFitness(y_test, y_test_pred)
-		elif errorType == 'adjusted':
-			trainErr = adjustedFitness(y_train, y_train_pred)
-			testErr = adjustedFitness(y_test, y_test_pred)
-		elif errorType == 'normalizedAdjusted':
-			trainErr = normalizedAdjustedFitness(y_train, y_train_pred, gpEstimator.fitnessFunction.sumAdjustedFitnesses)
-			testErr = normalizedAdjustedFitness(y_test, y_test_pred, gpEstimator.fitnessFunction.sumAdjustedFitnesses)
+		elif errorType == 'r2_score':
+			trainErr = r2_score(y_train, y_train_pred)
+			testErr = r2_score(y_test, y_test_pred)
 
+		if np.isnan(trainErr):
+			trainErr = np.inf
+
+		if np.isnan(testErr):
+			testErr = np.inf
+		
 		print('Train' + errorType + ' :', trainErr)
 		print('Test' + errorType + ' :', testErr)
 

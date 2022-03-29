@@ -1,5 +1,5 @@
-POPULATION_SIZE: 25 
-MAX_GENERATIONS: 20
+POPULATION_SIZE: 500 
+MAX_GENERATIONS: 25
 VERBOSE: True
 MAX_TREE_SIZE: 10 
 MUTATION_RATE: 0.3 
@@ -7,13 +7,14 @@ OP_MUTATION_RATE: 0.3
 MIN_HEIGHT: 2 
 INITIALIZATION_MAX_TREE_HEIGHT: 4 
 TOURNAMENT_SIZE: 4
-REPODUCTION_SIZE: 15
+REPODUCTION_SIZE: 300
 FUNCTIONS: ['add', 'sub', 'mul', 'div', 'pow', 'sin', 'cos', 'log']
+FITNESS_TYPE: 'adjusted'    # mse, rmse, nrmse, raw, adjusted, normalizedAdjusted
 ERROR_EPSILON: 0.0000000001
-ERROR_TYPE: 'mse'
+ERROR_TYPE: 'r2_score'   # mse, rmse, nrmse, r2_score
 NUM_RUNS: 5
 SSC: 
   USE_SSC: False
-  LBSS: 0.00001
-  UBSS: 0.6
+  LBSS: 0.0001
+  UBSS: 0.4
   MAX_TRIALS: 100

@@ -27,7 +27,7 @@ class GP:
         maxTreeSize = 10,
         tournamentSize = 4,
         reproductionSize = 200,
-        errorType = 'mse',
+        fitnessType = 'mse',
         errorEpsilon = 1e-10,
         verbose = False,
         useSSC = False,
@@ -47,10 +47,10 @@ class GP:
     def stopCondition(self):
         terminate = False
         elapsedTime = time.time() - self.startTime
-        print(self.fitnessFunction.bestIndividual.fitness)
-        print(self.errorEpsilon)
-        print(type(self.fitnessFunction.bestIndividual.fitness))
-        print(type(self.errorEpsilon))
+        #print(self.fitnessFunction.bestIndividual.fitness)
+        #print(self.errorEpsilon)
+        #print(type(self.fitnessFunction.bestIndividual.fitness))
+        #print(type(self.errorEpsilon))
         if self.fitnessFunction.bestIndividual.fitness < self.errorEpsilon:
             terminate = True
         if self.maxEvaluations > 0 and self.fitnessFunction.evaluations >= self.maxEvaluations:
@@ -142,8 +142,8 @@ class GP:
 
         self.population = self.initialPopulation()
         
-        if self.errorType == 'normalizedAdjusted':
-            self.fitnessFunction.sumAdjustedFitnesses = self.calculateAdjustedFitnesses(self.population)
+        if self.fitnessType == 'normalizedAdjusted':
+            self.fitnessFunction.sumAdjustedFitnesses = self.calculateSumOfAdjustedFitnesses(self.population)
         
         while not self.stopCondition():
 
@@ -152,17 +152,18 @@ class GP:
             self.population = newGeneration
             self.generations = self.generations + 1
 
-            if self.errorType == 'normalizedAdjusted':
-                self.fitnessFunction.sumAdjustedFitnesses = self.calculateAdjustedFitnesses(self.population)
+            if self.fitnessType == 'normalizedAdjusted':
+                self.fitnessFunction.sumAdjustedFitnesses = self.calculateSumOfAdjustedFitnesses(self.population)
 
             if self.verbose:
                 print ('g:',self.generations,'best fitness:', np.round(self.fitnessFunction.bestIndividual.fitness,3), ', size:', len(self.fitnessFunction.bestIndividual.subtrees()))
             
             
-    def calculateAdjustedFitnesses(self, population):
+    def calculateSumOfAdjustedFitnesses(self, population):
         sumAdjFit = 0
         for individual in population:
-            print(individual.stringRepresentation())
+            print("sumAdj indiv", individual.stringRepresentation())
+            print("sumAdj indiv value",  individual.value(self.fitnessFunction.X_train))
             sumAdjFit = sumAdjFit + adjustedFitness(self.fitnessFunction.y_train, individual.value(self.fitnessFunction.X_train))
             print('sumAdjFit', sumAdjFit)
         return sumAdjFit
