@@ -1,4 +1,4 @@
-FUNCTIONS: ['add', 'sub', 'mul', 'pow']
-ERROR_EPSILON: 0.00001
+FUNCTIONS: ['add', 'sub', 'mul', 'div', 'pow', 'sin', 'cos', 'log']
+ERROR_EPSILON: 0.000001
 ERROR_TYPE: 'mse'
-MAX_HOURS: 1
+MAX_HOURS: 3

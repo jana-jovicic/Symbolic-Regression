@@ -1,3 +1,6 @@
+import csv
+import shutil
+from tempfile import NamedTemporaryFile
 import time
 import inspect
 import itertools
@@ -17,7 +20,8 @@ class BruteForce():
 		maxTreeSize = 10,
 		errorType = 'mse',
 		errorEpsilon = 1e-10,
-        maxHours = 1):
+        maxHours = 2,
+        csvFile = './BruteForce/results/results.csv'):
 
         args, _, _, values = inspect.getargvalues(inspect.currentframe())
         values.pop('self')
@@ -84,8 +88,8 @@ class BruteForce():
             for function in functions:
 
                 hours, rem = divmod(time.time() - self.startTime, 3600)
-                minutes, seconds = divmod(rem, 60)
-                print("minutes passed: ", minutes)
+                #minutes, seconds = divmod(rem, 60)
+                
                 if hours >= self.maxHours:
                     break
 
@@ -135,8 +139,8 @@ class BruteForce():
             for i in range(n):
 
                 hours, rem = divmod(time.time() - self.startTime, 3600)
-                minutes, seconds = divmod(rem, 60)
-                print("minutes passed: ", minutes)
+                minutes, _ = divmod(rem, 60)
+                #print("minutes passed: ", minutes)
                 if hours >= self.maxHours:
                     return False, '', '', functions, True
 
@@ -165,7 +169,16 @@ class BruteForce():
                 if err < self.currentBestSolutionError:
                     self.currentBestSolution = func
                     self.currentBestSolutionError = err
+
+                    """
+                    with open(self.csvFile, 'w', encoding='UTF8') as file:
+                        writer = csv.writer(file)
+                        writer.writerow(data)
+                    """
+
+                    self.updateResultsFile()
                     
+
                 #print(self.currentBestSolution.stringRepresentation())
                 #print(self.currentBestSolutionError)
 
@@ -182,4 +195,74 @@ class BruteForce():
                 break
 
         return foundExactSolution, exactSolution, exactSolutionErr, functions, False
-            
+
+
+    def updateResultsFile(self):
+
+        """
+        op = open(self.csvFile, "r")
+        dt = csv.DictReader(op)
+        up_dt = []
+
+        executionTime = round(time.time()) - self.startTime
+        hours, rem = divmod(executionTime, 3600)
+        minutes, seconds = divmod(rem, 60)
+        executionTimeFormated = '{:0>2}:{:0>2}:{:05.2f}'.format(int(hours), int(minutes), seconds)
+
+        for r in dt:
+            row = {
+                'realEquation': r['realEquation'],
+                'foundExactSolution': '/',
+                'exactSolution': '/',
+                'sympyEquivalence': '/',
+                'nearestBestSolution': self.currentBestSolution,
+                'nearestBestSolutionError': self.currentBestSolutionError,
+                'Time (h:m:s)': executionTimeFormated,
+                'maxGivenHours': self.maxHours}
+            up_dt.append(row)
+
+        print('up_dt', up_dt)
+        op.close()
+        op = open(self.csvFile, "w", newline='')
+        headers = ['realEquation', 'foundExactSolution', 'exactSolution', 'sympyEquivalence', 'nearestBestSolution', 'nearestBestSolutionError', 'Time (h:m:s)', 'maxGivenHours']
+        data = csv.DictWriter(op, delimiter=',', fieldnames=headers)
+        data.writerow(dict((heads, heads) for heads in headers))
+        data.writerows(up_dt)
+        
+        op.close()
+        """
+
+        """
+        tempfile = NamedTemporaryFile(mode='w', delete=False)
+
+        executionTime = round(time.time()) - self.startTime
+        hours, rem = divmod(executionTime, 3600)
+        minutes, seconds = divmod(rem, 60)
+        executionTimeFormated = '{:0>2}:{:0>2}:{:05.2f}'.format(int(hours), int(minutes), seconds)
+
+        header = ['realEquation', 'foundExactSolution', 'exactSolution', 'sympyEquivalence', 'nearestBestSolution', 'nearestBestSolutionError', 'Time (h:m:s)', 'maxGivenHours']
+
+        with open(self.csvFile, 'r') as csvfile, tempfile:
+            reader = csv.DictReader(csvfile, fieldnames=header)
+            writer = csv.DictWriter(tempfile, fieldnames=header)
+            for row in reader:
+                row = {'realEquation': row['realEquation'], 'foundExactSolution': row['foundExactSolution'], 'exactSolution': row['exactSolution'], 'sympyEquivalence': row['sympyEquivalence'], 'nearestBestSolution': self.currentBestSolution.stringRepresentation(), 'nearestBestSolutionError': self.currentBestSolutionError, 'Time (h:m:s)': executionTimeFormated, 'maxGivenHours': self.maxHours}
+                writer.writerow(row)
+
+        shutil.move(tempfile.name, self.csvFile)
+        """
+
+        executionTime = round(time.time()) - self.startTime
+        hours, rem = divmod(executionTime, 3600)
+        minutes, seconds = divmod(rem, 60)
+        executionTimeFormated = '{:0>2}:{:0>2}:{:05.2f}'.format(int(hours), int(minutes), seconds)
+        
+        with open(self.csvFile, 'r') as readFile:
+            reader = csv.reader(readFile)
+            lines = list(reader)
+            lines[1][4], lines[1][5], lines[1][6], lines[1][7] = self.currentBestSolution.stringRepresentation(), self.currentBestSolutionError, executionTimeFormated, self.maxHours
+            print(lines)
+        
+        with open(self.csvFile, 'w') as writeFile:
+            writer = csv.writer(writeFile)
+            writer.writerows(lines)

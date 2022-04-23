@@ -10,7 +10,7 @@ TOURNAMENT_SIZE: 4
 REPODUCTION_SIZE: 300
 FUNCTIONS: ['add', 'sub', 'mul', 'div', 'pow', 'sin', 'cos', 'log']
 FITNESS_TYPE: 'adjusted'    # mse, rmse, nrmse, raw, adjusted, normalizedAdjusted
-ERROR_EPSILON: 0.0000000001
+ERROR_EPSILON: 0.000001
 ERROR_TYPE: 'r2_score'   # mse, rmse, nrmse, r2_score
 NUM_RUNS: 5
 SSC: 

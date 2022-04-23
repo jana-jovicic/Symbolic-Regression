@@ -55,18 +55,33 @@ def main():
     csvFile = resFile[: resFile.rfind('.')] + '.csv'
     open(csvFile, 'w').close()
     header = ['realEquation', 'foundExactSolution', 'exactSolution', 'sympyEquivalence', 'nearestBestSolution', 'nearestBestSolutionError', 'Time (h:m:s)', 'maxGivenHours']
-    # dodati symbolicEquivalence (pomocu sympy)
+    data = []
 
+    if args.realEquation:
+        with open(args.realEquation) as file:
+            realEquationSympy = parse_expr(file.readline())
+            data.append(realEquationSympy)
+    else:
+        data.append('/')
+
+    with open(csvFile, 'w', encoding='UTF8') as file:
+        writer = csv.writer(file)
+        writer.writerow(header)
+        if args.realEquation:
+            writer.writerow([realEquationSympy, '/', '/', '/', '/', '/', '/', '/'])
+        else:
+            writer.writerow(['/', '/', '/', '/', '/', '/', '/', '/'])
+
+    startTime = round(time.time())
 
     bp = BruteForce(X, y, 
         functions = fs,
 		maxTreeSize = 10,
 		errorType = cfg['ERROR_TYPE'],
 		errorEpsilon = cfg['ERROR_EPSILON'],
-        maxHours = cfg['MAX_HOURS'])
+        maxHours = cfg['MAX_HOURS'],
+        csvFile = csvFile)
 
-    startTime = round(time.time())
-    
     foundExactSolution, exactSolution, exactSolutionError, nearestBestSolution, nearestBestSolutionError = bp.run()
 
     executionTime = round(time.time()) - startTime
@@ -75,12 +90,6 @@ def main():
     minutes, seconds = divmod(rem, 60)
     executionTimeFormated = '{:0>2}:{:0>2}:{:05.2f}'.format(int(hours), int(minutes), seconds)
 
-    data = []
-
-    if args.realEquation:
-        with open(args.realEquation) as file:
-            realEquationSympy = parse_expr(file.readline())
-            data.append(realEquationSympy)
 
     #print("foundExactSolution", foundExactSolution)
     if foundExactSolution:
@@ -91,9 +100,8 @@ def main():
         data.append(exactSolution.stringRepresentation())
 
         # check with sympy if it is exactly equivalent
-        print(args.realEquation)
-        print(args.realEquation == True)
         if args.realEquation:
+            #realEquationSympy = parse_expr(file.readline())
             exactSolutionSympy = parse_expr(exactSolution.stringRepresentation())
             print("realEquationSympy",realEquationSympy)
             equationsDiff = exactSolutionSympy - realEquationSympy
@@ -118,7 +126,7 @@ def main():
     #print("nearestBestSolution", nearestBestSolution.stringRepresentation())
     #print("nearestBestSolutionError", nearestBestSolutionError)
 
-    with open(csvFile, 'a+', encoding='UTF8') as file:
+    with open(csvFile, 'w', encoding='UTF8') as file:
         writer = csv.writer(file)
         writer.writerow(header)
         writer.writerow(data)

@@ -1,2 +1,2 @@
 realEquation,foundExactSolution,exactSolution,sympyEquivalence,nearestBestSolution,nearestBestSolutionError,Time (h:m:s),maxGivenHours
-x0**2 + x1**2 + x2**2,True,((x0 * x0) + ((x1 * x1) + (x2 * x2))),True,((x0 * x0) + ((x1 * x1) + (x2 * x2))),1.3096323621833204e-32,00:02:23.00,1
+x0**4 + x0**3 + x0**2 + x0,True,((x0 + (x0 * x0)) * ((x0 * x0) + (x0 / x0))),True,((x0 + (x0 * x0)) * ((x0 * x0) + (x0 / x0))),2.5352059070022393e-32,00:00:22.00,1
