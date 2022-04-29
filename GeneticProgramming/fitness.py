@@ -68,7 +68,7 @@ class FitnessFunction:
 			else:
 				fit = np.inf
 
-		print("fit", fit)
+		#print("fit", fit)
 
 		individual.fitness = fit
 

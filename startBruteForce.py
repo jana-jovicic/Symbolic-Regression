@@ -76,7 +76,6 @@ def main():
 
     bp = BruteForce(X, y, 
         functions = fs,
-		maxTreeSize = 10,
 		errorType = cfg['ERROR_TYPE'],
 		errorEpsilon = cfg['ERROR_EPSILON'],
         maxHours = cfg['MAX_HOURS'],

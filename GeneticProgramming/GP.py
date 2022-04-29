@@ -22,8 +22,8 @@ class GP:
         maxEvaluations = -1,
         maxGenerations = -1,
         maxTime = -1,
-        minHeight = 2,
-        initializationMaxTreeHeight = 4,
+        minDepth = 2,
+        initializationMaxTreeDepth = 4,
         maxTreeSize = 10,
         tournamentSize = 4,
         reproductionSize = 200,
@@ -47,6 +47,7 @@ class GP:
     def stopCondition(self):
         terminate = False
         elapsedTime = time.time() - self.startTime
+        hours, rem = divmod(elapsedTime, 3600)
         #print(self.fitnessFunction.bestIndividual.fitness)
         #print(self.errorEpsilon)
         #print(type(self.fitnessFunction.bestIndividual.fitness))
@@ -57,7 +58,7 @@ class GP:
             terminate = True
         elif self.maxGenerations > 0 and self.generations >= self.maxGenerations:
             terminate = True
-        elif self.maxTime > 0 and elapsedTime >= self.maxTime:
+        elif self.maxTime > 0 and hours >= self.maxTime:
             terminate = True
 
         if terminate and self.verbose:
@@ -69,8 +70,8 @@ class GP:
     def initialPopulation(self):
 
         population = []
-        curretMaxDepth = self.minHeight
-        initDepthInterval = self.populationSize / (self.initializationMaxTreeHeight - self.minHeight + 1)
+        curretMaxDepth = self.minDepth
+        initDepthInterval = self.populationSize / (self.initializationMaxTreeDepth - self.minDepth + 1)
         nextDepthInterval = initDepthInterval
 
         for i in range(self.populationSize):
@@ -79,7 +80,7 @@ class GP:
                 curretMaxDepth += 1
 
             t = generateRandomTree( self.functions, self.terminals, curretMaxDepth, currentHeight=0, 
-                method='grow' if np.random.random() < 0.5 else 'full', minHeight=self.minHeight)
+                method='grow' if np.random.random() < 0.5 else 'full', minDepth=self.minDepth)
             self.fitnessFunction.evaluate(t)
             population.append(t)
         
@@ -98,15 +99,17 @@ class GP:
             else:
                 child1, child2 = subtreeCrossover(parents[0], parents[1])
 
-            if random() < self.mutationRate:
-                child1 = subtreeMutation(child1, self.functions, self.terminals, maxHeight=self.initializationMaxTreeHeight, minHeight=self.minHeight)
-            if random() < self.mutationRate:
-                child2 = subtreeMutation(child2, self.functions, self.terminals, maxHeight=self.initializationMaxTreeHeight, minHeight=self.minHeight)
-
-            if random() < self.opMutationRate:
-                child1 = onePointMutation(child1, self.functions, self.terminals)
-            if random() < self.opMutationRate:
-                child2 = onePointMutation(child2, self.functions, self.terminals)
+            # perform each type of mutation with equal opportunity
+            if random() < 0.5:
+                if random() < self.mutationRate:
+                    child1 = subtreeMutation(child1, self.functions, self.terminals, maxHeight=self.initializationMaxTreeDepth, minDepth=self.minDepth)
+                if random() < self.mutationRate:
+                    child2 = subtreeMutation(child2, self.functions, self.terminals, maxHeight=self.initializationMaxTreeDepth, minDepth=self.minDepth)
+            else:
+                if random() < self.opMutationRate:
+                    child1 = onePointMutation(child1, self.functions, self.terminals)
+                if random() < self.opMutationRate:
+                    child2 = onePointMutation(child2, self.functions, self.terminals)
 
             
             # check if children meet constraints	
@@ -114,23 +117,27 @@ class GP:
             if (self.maxTreeSize > -1 and len(child1.subtrees()) > self.maxTreeSize):
                 #print("Child1 len in maxTreeSize", len(child1.subtrees()))
                 invalidChild1 = True
-            elif (child1.height() < self.minHeight):
+            elif (child1.height() < self.minDepth):
                 invalidChild1 = True
 
             invalidChild2 = False
             if (self.maxTreeSize > -1 and len(child2.subtrees()) > self.maxTreeSize):
                 #print("Child2 len in maxTreeSize", len(child2.subtrees()))
                 invalidChild2 = True
-            elif (child2.height() < self.minHeight):
+            elif (child2.height() < self.minDepth):
                 invalidChild2 = True
 
             if not invalidChild1:
                 self.fitnessFunction.evaluate(child1)
                 offsprings.append(child1)
+            else:
+                offsprings.append(parents[0])
                 
             if not invalidChild2:
                 self.fitnessFunction.evaluate(child2)
                 offsprings.append(child2)
+            else:
+                offsprings.append(parents[1])
 
         return offsprings
             
@@ -162,8 +169,8 @@ class GP:
     def calculateSumOfAdjustedFitnesses(self, population):
         sumAdjFit = 0
         for individual in population:
-            print("sumAdj indiv", individual.stringRepresentation())
-            print("sumAdj indiv value",  individual.value(self.fitnessFunction.X_train))
+            #print("sumAdj indiv", individual.stringRepresentation())
+            #print("sumAdj indiv value",  individual.value(self.fitnessFunction.X_train))
             sumAdjFit = sumAdjFit + adjustedFitness(self.fitnessFunction.y_train, individual.value(self.fitnessFunction.X_train))
-            print('sumAdjFit', sumAdjFit)
+            #print('sumAdjFit', sumAdjFit)
         return sumAdjFit

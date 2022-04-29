@@ -17,7 +17,6 @@ class BruteForce():
         X,
         y,
 		functions = [AddNode(), SubNode(), MulNode(), DivNode(), LogNode()],
-		maxTreeSize = 10,
 		errorType = 'mse',
 		errorEpsilon = 1e-10,
         maxHours = 2,
@@ -53,15 +52,14 @@ class BruteForce():
 
         self.startTime = time.time()
 
-        while True:
+        terminalPermutations = []
+        for pair in itertools.product(terminals, repeat=2):
+            print(pair[0].stringRepresentation(), pair[1].stringRepresentation())
+            terminalPermutations.append(pair)
 
+        while True:
             
             print("height of the current trees: ", height)
-
-            terminalPermutations = []
-            for pair in itertools.product(terminals, repeat=2):
-                terminalPermutations.append(pair)
-                #print("pair:", pair[0].stringRepresentation(), ", ", pair[1].stringRepresentation())
 
             foundExactSolution, exactSolution, exactSolutionErr, functions, maxTimeExceeded = self.buildTree(terminalPermutations)
 
@@ -94,11 +92,21 @@ class BruteForce():
                     break
 
                 if any(terminal.stringRepresentation() == function.stringRepresentation() for terminal in terminals):
+                    #print("has terminal", function.stringRepresentation())
                     continue
                 else:
                     terminals.append(deepcopy(function))
-                   
-                    
+            
+            
+
+            #functions = list(set(functions))     
+            
+            #for function in functions:
+                #print("func", function.stringRepresentation())
+                #terminals.append(deepcopy(function))
+
+            #terminals = list(set(terminals))
+
 
             #for term in terminals:
                 #print("term", term.stringRepresentation())
@@ -106,6 +114,7 @@ class BruteForce():
             print("Generating permutations...")
             terminalPermutations = []
             for pair in itertools.product(terminals, repeat=2):
+                #print(pair[0].stringRepresentation(), pair[1].stringRepresentation())
                 terminalPermutations.append(pair)
             print("Finished Generating permutations")
             
@@ -125,14 +134,13 @@ class BruteForce():
     
     def buildTree(self, terminalPermutations):
 
-        functions = []
-
+        generatedFunctions = []
         foundExactSolution = False
         exactSolution = ''
         exactSolutionErr = np.inf
 
         for func in self.functions:
-            #print(func)
+            #print('func', func)
 
             n = len(terminalPermutations)
             #for pair in terminalPermutations:
@@ -142,23 +150,25 @@ class BruteForce():
                 minutes, _ = divmod(rem, 60)
                 #print("minutes passed: ", minutes)
                 if hours >= self.maxHours:
-                    return False, '', '', functions, True
+                    return False, '', '', generatedFunctions, True
 
                 pair = terminalPermutations[i]
-                func.appendLeft(deepcopy(pair[0]))
+                #func.appendLeft(deepcopy(pair[0]))
 
                 if func.arity == 1:
-                    #print(pair)
-                    #print(terminalPermutations[i-1])
                     if pair[0] == terminalPermutations[i-1][0]:
+                        # This function was already used as root functions left child in previous iteration, no need to check it again.
+                        # It can be done like this because of the way permutation pais are formed 
                         #print("same")
                         continue
 
+                func.appendLeft(deepcopy(pair[0]))
+
                 if func.arity > 1:
                     func.appendRight(deepcopy(pair[1]))
-                #print(func.stringRepresentation())
+                print("func", func.stringRepresentation())
 
-                functions.append(deepcopy(func))
+                generatedFunctions.append(deepcopy(func))
 
                 yPred = func.value(self.X)
                 yPred = [np.inf if np.isnan(y) else y for y in yPred]
@@ -194,7 +204,7 @@ class BruteForce():
             if foundExactSolution:
                 break
 
-        return foundExactSolution, exactSolution, exactSolutionErr, functions, False
+        return foundExactSolution, exactSolution, exactSolutionErr, generatedFunctions, False
 
 
     def updateResultsFile(self):

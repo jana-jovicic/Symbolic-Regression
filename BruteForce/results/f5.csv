@@ -1,0 +1,2 @@
+realEquation,foundExactSolution,exactSolution,sympyEquivalence,nearestBestSolution,nearestBestSolutionError,Time (h:m:s),maxGivenHours
+sin(x0**2)*cos(x0) - 1,/,/,/,(((x0 - x0) - (x0 / x0)) / ((x0 * x0) + (x0 / x0))),0.0003342042164517316,00:00:45.50,3

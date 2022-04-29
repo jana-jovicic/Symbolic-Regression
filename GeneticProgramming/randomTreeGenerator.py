@@ -6,7 +6,7 @@ from numpy.random import random
 from expression import EphemeralRandomConstantNode
 
 
-def generateRandomTree(functions, terminalVars, maxHeight, currentHeight=0, method='grow', minHeight=2, varProbability=0.8):
+def generateRandomTree(functions, terminalVars, maxHeight, currentHeight=0, method='grow', minDepth=2, varProbability=0.8):
 
     #print("method", method)
     #print("functions", functions)
@@ -26,13 +26,13 @@ def generateRandomTree(functions, terminalVars, maxHeight, currentHeight=0, meth
             #randConst = randint(constInterval[0],constInterval[1])
             #t = ConstantNode(randConst)
     else:
-        if method == 'grow' and currentHeight >= minHeight:
+        if method == 'grow' and currentHeight >= minDepth:
             termsAndFuncs = terminalVars + functions
             randIdx = randint(len(termsAndFuncs))
             t = deepcopy(termsAndFuncs[randIdx])
-        elif method == 'full' or (method == 'grow' and currentHeight < minHeight):
+        elif method == 'full' or (method == 'grow' and currentHeight < minDepth):
             # Only function append is allowed
-            # If terminal is appended, tree would be lower than minHeight
+            # If terminal is appended, tree would be lower than minDepth
             randIdx = randint(len(functions))
             t = deepcopy(functions[randIdx])
         else:
@@ -42,11 +42,11 @@ def generateRandomTree(functions, terminalVars, maxHeight, currentHeight=0, meth
 
 
         if t.arity > 0:
-            leftChild = generateRandomTree(functions, terminalVars, maxHeight, currentHeight=currentHeight+1, method=method, minHeight=minHeight, varProbability=varProbability)
+            leftChild = generateRandomTree(functions, terminalVars, maxHeight, currentHeight=currentHeight+1, method=method, minDepth=minDepth, varProbability=varProbability)
             #print("arity leftChild", leftChild)
             t.appendLeft(leftChild)
         if t.arity == 2:
-            rightChild = generateRandomTree(functions, terminalVars, maxHeight, currentHeight = currentHeight+1, method=method, minHeight=minHeight, varProbability=varProbability)
+            rightChild = generateRandomTree(functions, terminalVars, maxHeight, currentHeight = currentHeight+1, method=method, minDepth=minDepth, varProbability=varProbability)
             #print("arity rightChild", rightChild)
             t.appendRight(rightChild)
 

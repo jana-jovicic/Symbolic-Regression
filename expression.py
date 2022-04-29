@@ -57,6 +57,7 @@ class Node:
         return None
 
     def depth(self):
+        # from given node to root
         n = self
         d = 0
         while (n.parent):
@@ -65,6 +66,7 @@ class Node:
         return d
 
     def height(self):
+        # from given node to maximaly distant leaf
         currDepth = self.depth()
         subtree = self.subtrees()
         leaves = [x for x in subtree if x.arity == 0]

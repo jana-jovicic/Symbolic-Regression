@@ -74,9 +74,10 @@ def main():
 	# Initalize GP estimator
 
 
-	gpEstimator = GeneticProgrammingSymbolicRegressionEstimator(populationSize=cfg['POPULATION_SIZE'], maxGenerations=cfg['MAX_GENERATIONS'], 
-		verbose=cfg['VERBOSE'], maxTreeSize=cfg['MAX_TREE_SIZE'], mutationRate=cfg['MUTATION_RATE'], opMutationRate=cfg['OP_MUTATION_RATE'], 
-		minHeight=cfg['MIN_HEIGHT'], initializationMaxTreeHeight=cfg['INITIALIZATION_MAX_TREE_HEIGHT'], 
+	gpEstimator = GeneticProgrammingSymbolicRegressionEstimator(populationSize=cfg['POPULATION_SIZE'], maxGenerations=cfg['MAX_GENERATIONS'],
+		maxTime=cfg['MAX_HOURS'], maxEvaluations=cfg['MAX_EVALUATIONS'], verbose=cfg['VERBOSE'], 
+		maxTreeSize=cfg['MAX_TREE_SIZE'], mutationRate=cfg['MUTATION_RATE'], opMutationRate=cfg['OP_MUTATION_RATE'], 
+		minDepth=cfg['MIN_DEPTH'], initializationMaxTreeDepth=cfg['INITIALIZATION_MAX_TREE_DEPTH'], 
 		tournamentSize=cfg['TOURNAMENT_SIZE'], reproductionSize=cfg['REPODUCTION_SIZE'], 
 		fitnessType=fitnessType, errorEpsilon=cfg['ERROR_EPSILON'], functions = fs,
 		useSSC = cfg['SSC']['USE_SSC'],
@@ -106,7 +107,10 @@ def main():
 
 	csvFile = resFile[: resFile.rfind('.')] + '.csv'
 	open(csvFile, 'w').close()
-	header = ['Run', 'TrainError', 'TestError', 'BestIndividual', 'GenerationOfBestSolution', 'Time', 'SympyEquivalence']
+	if errorType == 'r2_score':
+		header = ['Run', 'TrainR2Score', 'TestR2Score', 'BestIndividual', 'GenerationOfBestSolution', 'Time', 'SympyEquivalence']
+	else:
+		header = ['Run', 'TrainError', 'TestError', 'BestIndividual', 'GenerationOfBestSolution', 'Time', 'SympyEquivalence']
 	# dodati symbolicEquivalence (pomocu sympy)
 
 	with open(csvFile, 'w', encoding='UTF8') as file:
@@ -119,7 +123,13 @@ def main():
 		file.write('Reproduction size: ' + str(cfg['REPODUCTION_SIZE']) + '\n')
 		file.write('Mutation rate: ' + str(cfg['MUTATION_RATE']) + '\n')
 		file.write('One point mutation rate: ' + str(cfg['OP_MUTATION_RATE']) + '\n')
+		file.write('Min tree depth: ' + str(cfg['MIN_DEPTH']) + '\n')
+		file.write('Max tree depth in initialization phase: ' + str(cfg['INITIALIZATION_MAX_TREE_DEPTH']) + '\n')
+		file.write('Max tree size: ' + str(cfg['MAX_TREE_SIZE']) + '\n')
+		file.write('Tournament size: ' + str(cfg['TOURNAMENT_SIZE']) + '\n')
+		file.write('Fitness type: ' + str(fitnessType) + '\n')
 		file.write('Error type: ' + str(errorType) + '\n')
+		file.write('Error epsilon: ' + str(cfg['ERROR_EPSILON']) + '\n')
 		if cfg['SSC']['USE_SSC']:
 			file.write('LBSS: ' + str(cfg['SSC']['LBSS']) + '\n')
 			file.write('UBSS: ' + str(cfg['SSC']['UBSS']) + '\n')
@@ -134,11 +144,14 @@ def main():
 
 	for run in range(cfg['NUM_RUNS']):
 
-		startTime = round(time.time())
+		startTime = time.time()
 
 		gpEstimator.fit(X_train, y_train)
 
-		endTime = round(time.time()) - startTime
+		endTime = time.time() - startTime
+		hours, rem = divmod(endTime, 3600)
+		minutes, seconds = divmod(rem, 60)
+		executionTimeFormated = '{:0>2}:{:0>2}:{:05.2f}'.format(int(hours), int(minutes), seconds)
 
 		bestIndividual = gpEstimator.getBest()
 		bestStr = bestIndividual.stringRepresentation()
@@ -189,7 +202,7 @@ def main():
 		"""
 
 		generationOfBestSolution = gpEstimator.gp.generations
-		data = [run, trainErr, testErr, bestStr, generationOfBestSolution, endTime]
+		data = [run, trainErr, testErr, bestStr, generationOfBestSolution, executionTimeFormated]
 		if args.realEquation:
 			data.append(sympyEquivalence)
 		with open(csvFile, 'a+', encoding='UTF8') as file:
