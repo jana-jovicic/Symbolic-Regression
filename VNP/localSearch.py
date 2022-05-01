@@ -9,7 +9,7 @@ def r2Score(y_real, y_pred):
 	return 1 - mse(y_real, y_pred) / np.var(y_real)
 
 
-def EET(initialTree, X, y):
+def ETT(initialTree, X, y):
 
     T = deepcopy(initialTree)
     #newTree = deepcopy(T)

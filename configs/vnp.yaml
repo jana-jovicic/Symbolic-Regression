@@ -1,0 +1,6 @@
+K_MAX: 2
+MIN_INIT_TREE_DEPTH: 4
+MAX_INIT_TREE_DEPTH: 10
+MAX_ITERATIONS: 2
+MAX_HOURS: 3
+FUNCTIONS: ['add', 'sub', 'mul', 'div', 'pow', 'sin', 'cos', 'log']
