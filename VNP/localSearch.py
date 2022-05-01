@@ -1,7 +1,15 @@
 from copy import deepcopy
 import numpy as np
 
-def EET(initialTree):
+
+def mse(y_real, y_pred):
+	return np.mean(np.square(y_real - y_pred))
+
+def r2Score(y_real, y_pred):
+	return 1 - mse(y_real, y_pred) / np.var(y_real)
+
+
+def EET(initialTree, X, y):
 
     T = deepcopy(initialTree)
     #newTree = deepcopy(T)
@@ -103,7 +111,6 @@ def EET(initialTree):
                     print("adding edge ({0}, {1}) on {2}".format(b, jChild, bDetachedChildPosition)) 
 
 
-            
 
                 else:
                     print("x != i")
@@ -138,26 +145,6 @@ def EET(initialTree):
                         b.appendRight(iChild)
                     print("adding edge ({0}, {1}) on {2}".format(b, iChild, bDetachedChildPosition)) 
 
-                """
-                newTree = deepcopy(T)
-                print("newTree", newTree.stringRepresentation())
-                #print("initialTree", initialTree.stringRepresentation())
-                
-                T = deepcopy(initialTree)
-                functionNodes = []
-                terminalNodes = []
-
-                subtreesT = T.subtrees()
-                print("subtrees", subtreesT)
-
-                for subtree in subtreesT:
-                    if subtree.nodeType() == 'function':
-                        functionNodes.append(subtree)
-                    if subtree.nodeType() == 'terminal':
-                        terminalNodes.append(subtree)
-
-                FH = functionNodes + terminalNodes
-                """
 
             
             elif j.nodeType() == 'terminal':
@@ -205,6 +192,19 @@ def EET(initialTree):
             newTree = deepcopy(T)
             print("newTree", newTree.stringRepresentation())
             #print("initialTree", initialTree.stringRepresentation())
+
+            yPredNewTree = newTree.value(X)
+            scoreNewTree = r2Score(y, yPredNewTree)
+
+            yPredInitialTree = initialTree.value(X)
+            scoreInitialTree = r2Score(y, yPredInitialTree)
+
+            print("/////////////  scoreNewTree:", scoreNewTree)
+            print("/////////////  scoreInitialTree:", scoreInitialTree)
+
+            if scoreNewTree > scoreInitialTree:
+                return True, newTree
+
             
             T = deepcopy(initialTree)
             functionNodes = []
@@ -222,6 +222,6 @@ def EET(initialTree):
             FH = functionNodes + terminalNodes
 
 
-                
+    return False, initialTree        
 
         
