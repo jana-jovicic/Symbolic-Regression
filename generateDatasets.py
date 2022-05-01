@@ -130,33 +130,16 @@ def f7(numPoints):
             file.write(str(f))
             file.write('\n')
 
+
 def f8(numPoints):
-    # f8 = √x
+    # f8 = sin(x0) + sin(x1 ** 2)
 
     filenameEquation = dir + 'f8_solution.txt'
     open(filenameEquation, 'w').close()
     with open(filenameEquation, 'w') as file:
-        file.write('√x0')
-
-    filename = dir+'f8.txt'
-    for i in range(numPoints):
-        # x from [0,4]
-        x = np.random.random()*4
-        f = np.sqrt(x)
-        with open(filename, 'a+') as file:
-            file.write(str(x)+' ')
-            file.write(str(f))
-            file.write('\n')
-
-def f9(numPoints):
-    # f9 = sin(x0) + sin(x1 ** 2)
-
-    filenameEquation = dir + 'f9_solution.txt'
-    open(filenameEquation, 'w').close()
-    with open(filenameEquation, 'w') as file:
         file.write('sin(x0) + sin(x1 ** 2)')
 
-    filename = dir+'f9.txt'
+    filename = dir+'f8.txt'
     for i in range(numPoints):
         # points from [-1,1]
         x0 = np.random.random()*2 - 1
@@ -168,15 +151,15 @@ def f9(numPoints):
             file.write(str(f))
             file.write('\n')
 
-def f10(numPoints):
-    # f10 = 2sin(x0)cos(x1)
+def f9(numPoints):
+    # f9 = 2sin(x0)cos(x1)
 
-    filenameEquation = dir + 'f10_solution.txt'
+    filenameEquation = dir + 'f9_solution.txt'
     open(filenameEquation, 'w').close()
     with open(filenameEquation, 'w') as file:
         file.write('2 * sin(x0) * cos(x1)')
 
-    filename = dir+'f10.txt'
+    filename = dir+'f9.txt'
     for i in range(numPoints):
         # points from [-1,1]
         x0 = np.random.random()*2 - 1
@@ -310,7 +293,7 @@ def f3(numPoints):
             file.write('\n')
 """
 
-nameFunctionMap = {"f1":f1, "f2":f2, "f3":f3, "f4":f4, "f5":f5, "f6":f6, "f7":f7, "f8":f8, "f9":f9, "f10":f10, "f01":f01, "f02":f02, "f03":f03}
+nameFunctionMap = {"f1":f1, "f2":f2, "f3":f3, "f4":f4, "f5":f5, "f6":f6, "f7":f7, "f8":f8, "f9":f9, "f01":f01, "f02":f02, "f03":f03}
 
 def main():
 

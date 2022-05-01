@@ -14,25 +14,12 @@ from expression import *
 from GeneticProgramming.GP import GP
 from GeneticProgramming.GPEstimator import GeneticProgrammingSymbolicRegressionEstimator
 from GeneticProgramming.fitness import mse, r2Score, rmse, nrmse
+from util.loadDatasets import loadRealDataset, loadGeneratedDataset, loadSynchronousMachineDataset, loadYachtDataset
 from util.yamlParser import getConfig
 
 np.random.seed(42)
 
 functionNames = {"add": AddNode(), "sub": SubNode(), "mul": MulNode(), "div": DivNode(), "pow": PowNode(), "log": LogNode(), "exp": ExpNode(), "sin": SinNode(), "cos": CosNode()}
-
-def loadDataset(datapointsFile):
-	X, y = [], []
-	
-	with open(datapointsFile, 'r') as file:
-		lines = file.readlines()
-		for line in lines:
-			line = line.split(' ')
-			#print(line[:-1])
-			xs = [float(x) for x in line[:-1]]
-			X.append(xs)
-			y.append(float(line[-1]))
-	return np.array(X), np.array(y)
-		
 
 
 def main():
@@ -56,11 +43,15 @@ def main():
 	"""
 
 	parser = argparse.ArgumentParser(description='GP')
-	#parser.add_argument("--GPtype", type=str, default='basic', help='type of GP algorithm')
+	parser.add_argument("--datasetType", type=str, default='generated', help='type of dataset (could be: "generated", "real")')
+	parser.add_argument("--standardizeData", default=False, action='store_true', help='flag to indicate whether or not to standardize data')
 	parser.add_argument("--config", type=str, default='./configs/gp.yaml', help='path to configuration file')
-	parser.add_argument('--datapointsFile', default='generatedDatasets/f1.txt', type=str, help='path to file that contains datapoints')
-	parser.add_argument('--realEquation', default='generatedDatasets/f1_solution.txt', type=str, help='path to file that contains exact solution')
+	parser.add_argument('--datapointsFile', required=False, default='generatedDatasets/f1.txt', type=str, help='path to file that contains datapoints')
+	parser.add_argument('--realEquation', required=False, default='generatedDatasets/f1_solution.txt', type=str, help='path to file that contains exact solution')
 	args = parser.parse_args()
+
+	if args.datasetType == "generated" and args.datapointsFile is None:
+		parser.error('\t\t File fith datapoints must be provided. Example usage is in file startGP.sh')
 
 	cfg = getConfig(args.config)
 	print(cfg)
@@ -86,13 +77,36 @@ def main():
 		sscMaxTrials = cfg['SSC']['MAX_TRIALS'])
 
 	
-	X, y = loadDataset(args.datapointsFile)
+	if args.datasetType == "generated":
+		X, y = loadGeneratedDataset(args.datapointsFile)
+	elif args.datasetType == "real":
+		fileType = args.datapointsFile[args.datapointsFile.rfind('.')+1:]
+		#print(fileType)
+		X, y = loadRealDataset(args.datapointsFile, fileType)
+	elif args.datasetType == "synchronous_machine":
+		X, y = loadSynchronousMachineDataset(args.datapointsFile)
+	elif args.datasetType == "yacht":
+		X, y = loadYachtDataset(args.datapointsFile)
+
 	print('Xs', X[:5])
 	print('ys', y[:5])
 
+	
+
 	X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-	dir = './GeneticProgramming/results/'
+	if args.standardizeData:
+		from sklearn import preprocessing
+		scaler = preprocessing.StandardScaler()
+		scaler.fit(X_train)
+		X_train = scaler.transform(X_train)
+		X_test = scaler.transform(X_test)
+
+	#print('X_train', X_train[:5])
+	
+
+	#dir = './GeneticProgramming/results/'
+	dir = './results/GP/'
 
 	if cfg['SSC']['USE_SSC']:
 		dir += 'SSC'
@@ -101,16 +115,16 @@ def main():
 
 	if not os.path.exists(dir):
 		os.makedirs(dir)
-	resFile = args.datapointsFile[args.datapointsFile.rfind(os.path.sep) : ]
+	resFile = args.datapointsFile[args.datapointsFile.rfind(os.path.sep) : args.datapointsFile.rfind('.')] + '.txt'
 	resFile = dir + resFile
 	open(resFile, 'w').close()
 
 	csvFile = resFile[: resFile.rfind('.')] + '.csv'
 	open(csvFile, 'w').close()
 	if errorType == 'r2_score':
-		header = ['Run', 'TrainR2Score', 'TestR2Score', 'BestIndividual', 'GenerationOfBestSolution', 'Time', 'SympyEquivalence']
+		header = ['Run', 'TrainR2Score', 'TestR2Score', 'BestIndividual', 'BestIndividualSimplified', 'GenerationOfBestSolution', 'Time', 'SympyEquivalence']
 	else:
-		header = ['Run', 'TrainError', 'TestError', 'BestIndividual', 'GenerationOfBestSolution', 'Time', 'SympyEquivalence']
+		header = ['Run', 'TrainError', 'TestError', 'BestIndividual', 'BestIndividualSimplified', 'GenerationOfBestSolution', 'Time', 'SympyEquivalence']
 	# dodati symbolicEquivalence (pomocu sympy)
 
 	with open(csvFile, 'w', encoding='UTF8') as file:
@@ -157,6 +171,8 @@ def main():
 		bestStr = bestIndividual.stringRepresentation()
 		print('Best individual:', bestStr)
 
+		bestIndividualSimplified = simplify(bestStr)
+
 		bestIndividualSympy = parse_expr(bestStr)
 		equationsDiff = bestIndividualSympy - realEquationSympy
 		diffSimplified = simplify(equationsDiff)
@@ -202,7 +218,7 @@ def main():
 		"""
 
 		generationOfBestSolution = gpEstimator.gp.generations
-		data = [run, trainErr, testErr, bestStr, generationOfBestSolution, executionTimeFormated]
+		data = [run, trainErr, testErr, bestStr, bestIndividualSimplified, generationOfBestSolution, executionTimeFormated]
 		if args.realEquation:
 			data.append(sympyEquivalence)
 		with open(csvFile, 'a+', encoding='UTF8') as file:

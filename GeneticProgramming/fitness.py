@@ -41,11 +41,15 @@ class FitnessFunction:
 		self.evaluations = self.evaluations + 1
 
 		output = individual.value(self.X_train)
-		#print("output", output)
+		#print("fitness evaluate", output)
 		#print("self.y_train", self.y_train)
 
-		fit = np.inf
+		if self.fitnessType == 'adjusted' or self.fitnessType == 'normalizedAdjusted':
+			fit = 0
+		else:
+			fit = np.inf
 
+		
 		if self.fitnessType == 'mse':
 			fit = mse(self.y_train, output)
 		elif self.fitnessType == 'rmse':
@@ -62,7 +66,7 @@ class FitnessFunction:
 
 		#print("fit", fit)
 
-		if np.isnan(fit):
+		if np.isnan(fit) or fit == float("inf") or fit == float("-inf"):
 			if self.fitnessType == 'adjusted' or self.fitnessType == 'normalizedAdjusted':
 				fit = 0
 			else:
@@ -80,3 +84,5 @@ class FitnessFunction:
 		if updateBestIndividual:
 			del self.bestIndividual
 			self.bestIndividual = deepcopy(individual)
+			#print("Best indiv", self.bestIndividual.stringRepresentation())
+			#print("Best indiv fit", self.bestIndividual.fitness)

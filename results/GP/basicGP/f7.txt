@@ -1,0 +1,12 @@
+Population size: 500
+Max number of generations: 50
+Reproduction size: 300
+Mutation rate: 0.2
+One point mutation rate: 0.2
+Min tree depth: 2
+Max tree depth in initialization phase: 6
+Max tree size: 12
+Tournament size: 3
+Fitness type: adjusted
+Error type: r2_score
+Error epsilon: 1e-05

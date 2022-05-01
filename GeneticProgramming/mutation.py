@@ -91,12 +91,16 @@ def onePointMutation(individual, functions, terminalVars):
 
 
 
-def subtreeMutation(individual, functions, terminals, maxHeight=4, minDepth=2):
+def subtreeMutation(individual, functions, terminals, X, maxHeight=4, minDepth=2):
 
     newIndividual = deepcopy(individual)
 
     newBranch = generateRandomTree(functions, terminals, maxHeight, minDepth)
     #print("newBranch", newBranch.stringRepresentation())
+    
+    while not newBranch.isFeasible(X):
+        newBranch = generateRandomTree(functions, terminals, maxHeight, minDepth)
+    
 
     subtreeNodes = newIndividual.subtrees()
     #print("subtreeNodes", subtreeNodes)

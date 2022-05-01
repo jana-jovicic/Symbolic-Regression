@@ -3,7 +3,6 @@ from copy import deepcopy
 from numpy.random import randint
 from numpy.random import random
 from GeneticProgramming.mutation import candidateNodesAtRandomDepth
-from GeneticProgramming.randomTreeGenerator import generateRandomTree
 
 from expression import SubNode
 
@@ -203,16 +202,18 @@ def SSC(individual1, individual2, X, LBSS, UBSS, maxTrials):
         for i in range(nPoints):
             SSD += np.abs(ps[i] - qs[i])
         SSD /= nPoints
-        print("SSD", SSD)
+        #print("SSD", SSD)
 
 
         # Semantic Similarity
         SS = LBSS < SSD < UBSS
-        print("Semantic Similarity: ", SS)
-        print()
+        #print("Semantic Similarity: ", SS)
+        #print()
 
 
         if SS:
+
+            #print("Executing SSC crossover")
 
             # execute crossover
             child1, child2 = swapSubtrees(subtree1, subtree2, child1, child2)
@@ -225,7 +226,7 @@ def SSC(individual1, individual2, X, LBSS, UBSS, maxTrials):
 
 
     if not crossoverExecuted:
-        print("Executing random subtree crossover")
+        #print("Executing random subtree crossover")
         child1, child2 = subtreeCrossover(individual1, individual2)
 
 

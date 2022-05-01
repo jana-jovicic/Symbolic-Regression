@@ -1,3 +1,4 @@
+from cmath import nan
 import numpy as np
 
 
@@ -9,6 +10,9 @@ class Node:
         self.arity = 0
         self.left = None
         self.right = None
+
+    def nodeType(self):
+        raise NotImplementedError('nodeType() is not implemented for base class Node')
 
     def subtrees(self):
         result = []
@@ -29,17 +33,6 @@ class Node:
         self.right = rightChild
         rightChild.parent = self
 
-    """
-    def detachLeftChild(self, child):
-        #self.arity -= 1
-        self.left = None
-        child.parent = None
-
-    def detachRightChild(self, child):
-        #self.arity -= 1
-        self.right = None
-        child.parent = None
-    """
 
     def detachChildNode(self, child):
         detached = ""
@@ -104,8 +97,20 @@ class Node:
 
 
     def stringRepresentationSpecificNode(self, args):
-        raise NotImplementedError('stringRepresentationSpecificNode is not implemented for base class Node')
-
+        raise NotImplementedError('stringRepresentationSpecificNode() is not implemented for base class Node')
+    
+    def isFeasible(self, X):
+        values = self.value(X)
+        #print('-------------')
+        #print('values ', values)
+        #print('type values ', type(values))
+        #print('shape values ', values.shape)
+        #print(values.shape == ())
+        if values.shape == ():
+            values = np.array([values])
+            #print('values ', values)
+        isInfeasible = any(np.isnan(v) for v in values) or any(v == float("inf") for v in values) or any(v == float("-inf") for v in values)
+        return not isInfeasible
 
 
 class VariableNode(Node):
@@ -124,6 +129,9 @@ class VariableNode(Node):
 
     def value(self, X):
         return X[:,self.id]
+    
+    def nodeType(self):
+        return 'terminal'
 
 
 class EphemeralRandomConstantNode(Node):
@@ -143,6 +151,9 @@ class EphemeralRandomConstantNode(Node):
 
     def value(self, X):
         return np.array(self.valueNumber)
+
+    def nodeType(self):
+        return 'terminal'
 
 """
 class ConstantNode(Node):
@@ -190,6 +201,9 @@ class AddNode(Node):
         valRight = self.right.value(X)
         return valLeft + valRight
 
+    def nodeType(self):
+        return 'function'
+
 
 
 class SubNode(Node):
@@ -212,6 +226,9 @@ class SubNode(Node):
         valRight = self.right.value(X)
         return valLeft - valRight
 
+    def nodeType(self):
+        return 'function'
+
 
 class MulNode(Node):
 
@@ -233,6 +250,9 @@ class MulNode(Node):
         valRight = self.right.value(X)
         return np.multiply(valLeft, valRight)
 
+    def nodeType(self):
+        return 'function'
+
 
 class DivNode(Node):
 
@@ -252,9 +272,11 @@ class DivNode(Node):
     def value(self, X):
         valLeft = self.left.value(X)
         valRight = self.right.value(X)
-        valRight = np.where(valRight == 0, 0.000001, valRight)
+        #valRight = np.where(valRight == 0, 0.000001, valRight)
         return valLeft / valRight
         
+    def nodeType(self):
+        return 'function'
 
 
 class PowNode(Node):
@@ -264,10 +286,10 @@ class PowNode(Node):
         self.arity = 2
 
     def __str__(self):
-        return '^'
+        return '**'
 
     def __repr__(self):
-        return '^'
+        return '**'
 
     def stringRepresentationSpecificNode(self, args):
         return '(' + args[0] + '**(' + args[1] + '))'
@@ -275,7 +297,10 @@ class PowNode(Node):
     def value(self, X):
         valLeft = self.left.value(X)
         valRight = self.right.value(X)
-        return np.power(valLeft, valRight)
+        return valLeft ** valRight
+
+    def nodeType(self):
+        return 'function'
 
 
 """
@@ -303,6 +328,10 @@ class SinNode(Node):
         valLeft = self.left.value(X)
         return np.sin(valLeft)
 
+    def nodeType(self):
+        return 'function'
+
+
 class CosNode(Node):
 
     def __init__(self):
@@ -321,6 +350,9 @@ class CosNode(Node):
     def value(self, X):
         valLeft = self.left.value(X)
         return np.cos(valLeft)
+
+    def nodeType(self):
+        return 'function'
 
 
 class LogNode(Node):
@@ -343,6 +375,10 @@ class LogNode(Node):
         valLeft = np.where(valLeft == 0, 0.000001, valLeft)
         return np.log(valLeft)
 
+    def nodeType(self):
+        return 'function'
+
+
 
 
 class ExpNode(Node):
@@ -363,3 +399,6 @@ class ExpNode(Node):
     def value(self, X):
         valLeft = self.left.value(X)
         return np.exp(valLeft)
+
+    def nodeType(self):
+        return 'function'

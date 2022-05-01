@@ -52,8 +52,19 @@ class GP:
         #print(self.errorEpsilon)
         #print(type(self.fitnessFunction.bestIndividual.fitness))
         #print(type(self.errorEpsilon))
-        if self.fitnessFunction.bestIndividual.fitness < self.errorEpsilon:
-            terminate = True
+
+        #if self.fitnessFunction.bestIndividual.fitness < self.errorEpsilon:
+        if self.fitnessType == 'adjusted' or self.fitnessType == 'normalizedAdjusted':
+            if self.fitnessFunction.bestIndividual.fitness > 0.9:
+                terminate = True
+                print("found best solution")
+                print("fitness", self.fitnessFunction.bestIndividual.fitness)
+
+        else:
+            if self.fitnessFunction.bestIndividual.fitness < self.errorEpsilon:
+                terminate = True
+
+
         if self.maxEvaluations > 0 and self.fitnessFunction.evaluations >= self.maxEvaluations:
             terminate = True
         elif self.maxGenerations > 0 and self.generations >= self.maxGenerations:
@@ -79,9 +90,20 @@ class GP:
                 nextDepthInterval += initDepthInterval
                 curretMaxDepth += 1
 
-            t = generateRandomTree( self.functions, self.terminals, curretMaxDepth, currentHeight=0, 
+            t = generateRandomTree(self.functions, self.terminals, curretMaxDepth, currentHeight=0, 
                 method='grow' if np.random.random() < 0.5 else 'full', minDepth=self.minDepth)
+
+            
+            while not t.isFeasible(self.fitnessFunction.X_train):
+                t = generateRandomTree(self.functions, self.terminals, curretMaxDepth, currentHeight=0, 
+                method='grow' if np.random.random() < 0.5 else 'full', minDepth=self.minDepth)
+            
+
             self.fitnessFunction.evaluate(t)
+
+            #print(t.stringRepresentation())
+            #print()
+
             population.append(t)
         
         return population
@@ -92,35 +114,52 @@ class GP:
         offsprings = []
         while len(offsprings) < self.populationSize:
 
+            invalidChild1 = False
+            invalidChild2 = False
+
             parents = np.random.choice(individualsForReproduction, 2)
 
             if self.useSSC:
                 child1, child2 = SSC(parents[0], parents[1], self.fitnessFunction.X_train, self.sscLBSS, self.sscUBSS, self.sscMaxTrials)
             else:
                 child1, child2 = subtreeCrossover(parents[0], parents[1])
+                
+            if not child1.isFeasible(self.fitnessFunction.X_train):
+                invalidChild1 = True
+            if not child2.isFeasible(self.fitnessFunction.X_train):
+                invalidChild2 = True
+                
 
             # perform each type of mutation with equal opportunity
             if random() < 0.5:
                 if random() < self.mutationRate:
-                    child1 = subtreeMutation(child1, self.functions, self.terminals, maxHeight=self.initializationMaxTreeDepth, minDepth=self.minDepth)
+                    child1 = subtreeMutation(child1, self.functions, self.terminals, self.fitnessFunction.X_train, maxHeight=self.initializationMaxTreeDepth, minDepth=self.minDepth)
                 if random() < self.mutationRate:
-                    child2 = subtreeMutation(child2, self.functions, self.terminals, maxHeight=self.initializationMaxTreeDepth, minDepth=self.minDepth)
+                    child2 = subtreeMutation(child2, self.functions, self.terminals, self.fitnessFunction.X_train, maxHeight=self.initializationMaxTreeDepth, minDepth=self.minDepth)
             else:
                 if random() < self.opMutationRate:
                     child1 = onePointMutation(child1, self.functions, self.terminals)
+                    
+                    if not child1.isFeasible(self.fitnessFunction.X_train):
+                        invalidChild1 = True
+                    
                 if random() < self.opMutationRate:
                     child2 = onePointMutation(child2, self.functions, self.terminals)
+                    
+                    if not child2.isFeasible(self.fitnessFunction.X_train):
+                        invalidChild2 = True
+                    
 
             
             # check if children meet constraints	
-            invalidChild1 = False
+            
             if (self.maxTreeSize > -1 and len(child1.subtrees()) > self.maxTreeSize):
                 #print("Child1 len in maxTreeSize", len(child1.subtrees()))
                 invalidChild1 = True
             elif (child1.height() < self.minDepth):
                 invalidChild1 = True
 
-            invalidChild2 = False
+            
             if (self.maxTreeSize > -1 and len(child2.subtrees()) > self.maxTreeSize):
                 #print("Child2 len in maxTreeSize", len(child2.subtrees()))
                 invalidChild2 = True
@@ -131,13 +170,13 @@ class GP:
                 self.fitnessFunction.evaluate(child1)
                 offsprings.append(child1)
             else:
-                offsprings.append(parents[0])
+                offsprings.append(deepcopy(parents[0]))
                 
             if not invalidChild2:
                 self.fitnessFunction.evaluate(child2)
                 offsprings.append(child2)
             else:
-                offsprings.append(parents[1])
+                offsprings.append(deepcopy(parents[1]))
 
         return offsprings
             
@@ -163,7 +202,7 @@ class GP:
                 self.fitnessFunction.sumAdjustedFitnesses = self.calculateSumOfAdjustedFitnesses(self.population)
 
             if self.verbose:
-                print ('g:',self.generations,'best fitness:', np.round(self.fitnessFunction.bestIndividual.fitness,3), ', size:', len(self.fitnessFunction.bestIndividual.subtrees()))
+                print ('g:',self.generations,'best fitness:',self.fitnessFunction.bestIndividual.fitness, ', size:', len(self.fitnessFunction.bestIndividual.subtrees()))
             
             
     def calculateSumOfAdjustedFitnesses(self, population):
