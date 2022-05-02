@@ -1,8 +1,7 @@
 import csv
 import time
 import os, argparse
-import numpy as np 
-#from sklearn.metrics import r2_score
+import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import scale
 from copy import deepcopy
@@ -115,6 +114,7 @@ def main():
 
 	if not os.path.exists(dir):
 		os.makedirs(dir)
+
 	resFile = args.datapointsFile[args.datapointsFile.rfind(os.path.sep) : args.datapointsFile.rfind('.')] + '.txt'
 	resFile = dir + resFile
 	open(resFile, 'w').close()
@@ -125,7 +125,6 @@ def main():
 		header = ['Run', 'TrainR2Score', 'TestR2Score', 'BestIndividual', 'BestIndividualSimplified', 'GenerationOfBestSolution', 'Time', 'SympyEquivalence']
 	else:
 		header = ['Run', 'TrainError', 'TestError', 'BestIndividual', 'BestIndividualSimplified', 'GenerationOfBestSolution', 'Time', 'SympyEquivalence']
-	# dodati symbolicEquivalence (pomocu sympy)
 
 	with open(csvFile, 'w', encoding='UTF8') as file:
 		writer = csv.writer(file)
@@ -181,9 +180,9 @@ def main():
 		y_train_pred = gpEstimator.predict(X_train)
 		y_test_pred = gpEstimator.predict(X_test)
 
-		print("X_train", X_train)
+		#print("X_train", X_train)
 		#print("y_train", y_train)
-		print("y_train_pred", y_train_pred)
+		#print("y_train_pred", y_train_pred)
 
 		if errorType == 'mse':
 			trainErr = mse(y_train, y_train_pred)

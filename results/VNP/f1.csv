@@ -1,0 +1,2 @@
+Run,TrainR2Score,TestR2Score,BestSolution,BestSolutionSimplified,IterationOfBestSolution,Time,SympyEquivalence
+0,0.9777882682495297,0.9821851102344851,log(((0.993 - x0)**(((((x0 - x0) - x0) - 0.993) + x0)))),log((0.993 - x0)**(-0.993)),1001,00:00:12.72,False
