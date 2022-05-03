@@ -1,0 +1,6 @@
+K_MAX: 6
+Min depth of initial tree: 2
+Max depth of initial tree: 4
+Max depth of created trees: 6
+Max number of iterations: 1000
+Max number of hours for program execution: 3

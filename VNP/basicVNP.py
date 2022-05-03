@@ -27,7 +27,7 @@ class VNP:
         for arg, val in values.items():
             setattr(self, arg, val)
 
-        self.bestSolutionScore = -np.inf
+        #self.bestSolutionScore = -np.inf
         
 
 
@@ -79,6 +79,9 @@ class VNP:
 
     def run(self, T, X, y):
 
+        self.bestSolution = T
+        self.bestSolutionScore = r2Score(y, T.value(X))
+
         self.iteration = 1
         self.startTime = time.time()
 
@@ -89,6 +92,9 @@ class VNP:
                 newT = self.shake(T, k, X, y)
                 _, transformedT = ETT(newT, X, y)
 
+                #if not transformedT.isFeasible(X):
+                    #continue
+
                 if self.maxTreeDepth > -1 and transformedT.height() > self.maxTreeDepth:
                     continue
                 
@@ -97,6 +103,7 @@ class VNP:
 
                 y_pred = T.value(X)
                 score = r2Score(y, y_pred)
+                #print("score",score)
                 if score > self.bestSolutionScore:
                     self.bestSolutionScore = score
                     self.bestSolution = deepcopy(T)
@@ -112,6 +119,10 @@ class VNP:
     def fit(self, X, y):
 
         T = generateRandomTree(self.functions, self.terminals, self.maxInitTreeDepth, currentHeight=0, 
+                method='grow', minDepth=self.minInitTreeDepth)
+
+        while not T.isFeasible(X):
+            T = generateRandomTree(self.functions, self.terminals, self.maxInitTreeDepth, currentHeight=0, 
                 method='grow', minDepth=self.minInitTreeDepth)
 
         self.run(T, X, y)

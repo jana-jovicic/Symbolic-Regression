@@ -67,12 +67,13 @@ def main():
     print("terminals", terminals)
     print("functions", fs)
     
+    """
     vnp = VNP(terminals=terminals, functions=fs, minInitTreeDepth = cfg['MIN_INIT_TREE_DEPTH'], maxInitTreeDepth = cfg['MAX_INIT_TREE_DEPTH'], 
             kMax = cfg['K_MAX'], maxIterations=cfg['MAX_ITERATIONS'], maxHours=cfg['MAX_HOURS'],
             maxTreeDepth = cfg['MAX_TREE_DEPTH'])
+    """
 
-
-    dir = './results/VNP/'
+    dir = './results/VNP'
 
     if not os.path.exists(dir):
         os.makedirs(dir)
@@ -106,6 +107,10 @@ def main():
     for run in range(cfg['NUM_RUNS']):
 
         startTime = time.time()
+
+        vnp = VNP(terminals=terminals, functions=fs, minInitTreeDepth = cfg['MIN_INIT_TREE_DEPTH'], maxInitTreeDepth = cfg['MAX_INIT_TREE_DEPTH'], 
+            kMax = cfg['K_MAX'], maxIterations=cfg['MAX_ITERATIONS'], maxHours=cfg['MAX_HOURS'],
+            maxTreeDepth = cfg['MAX_TREE_DEPTH'])
 
         vnp.fit(X_train, y_train)
 
