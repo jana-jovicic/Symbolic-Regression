@@ -206,7 +206,7 @@ def SSC(individual1, individual2, X, LBSS, UBSS, maxTrials):
 
 
         # Semantic Similarity
-        SS = LBSS < SSD < UBSS
+        SS = LBSS <= SSD <= UBSS
         #print("Semantic Similarity: ", SS)
         #print()
 

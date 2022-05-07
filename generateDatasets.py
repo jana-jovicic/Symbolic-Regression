@@ -229,6 +229,63 @@ def f03(numPoints):
             file.write(str(f))
             file.write('\n')
 
+def f04(numPoints):
+        # f0 = x0 - x1 * x1
+    
+        filenameEquation = dir + 'f04_solution.txt'
+        open(filenameEquation, 'w').close()
+        with open(filenameEquation, 'w') as file:
+            file.write('x0 - x1 * x1')
+        filename = dir+'f04.txt'
+        for i in range(numPoints):
+            x0 = np.random.random()*2 - 1
+            x1 = np.random.random()*2 - 1
+            f = x0 - x1 * x1
+            #print(f)
+            with open(filename, 'a+') as file:
+                file.write(str(x0)+' ')
+                file.write(str(x1)+' ')
+                file.write(str(f))
+                file.write('\n')
+
+def f05(numPoints):
+        # f0 = x0 - x1 * x1 + x1
+    
+        filenameEquation = dir + 'f05_solution.txt'
+        open(filenameEquation, 'w').close()
+        with open(filenameEquation, 'w') as file:
+            file.write('x0 - x1 * x1 + x1')
+        filename = dir+'f05.txt'
+        for i in range(numPoints):
+            x0 = np.random.random()*2 - 1
+            x1 = np.random.random()*2 - 1
+            f = x0 - x1 * x1 + x1
+            #print(f)
+            with open(filename, 'a+') as file:
+                file.write(str(x0)+' ')
+                file.write(str(x1)+' ')
+                file.write(str(f))
+                file.write('\n')
+
+def f06(numPoints):
+        # f0 = sin(x0) - x1 * x1
+    
+        filenameEquation = dir + 'f06_solution.txt'
+        open(filenameEquation, 'w').close()
+        with open(filenameEquation, 'w') as file:
+            file.write('sin(x0) - x1 * x1')
+        filename = dir+'f06.txt'
+        for i in range(numPoints):
+            x0 = np.random.random()*2 - 1
+            x1 = np.random.random()*2 - 1
+            f = np.sin(x0) - x1 * x1
+            #print(f)
+            with open(filename, 'a+') as file:
+                file.write(str(x0)+' ')
+                file.write(str(x1)+' ')
+                file.write(str(f))
+                file.write('\n')
+
 
 def f09(numPoints):
     # f09 = x0 + sin(x1)
@@ -293,13 +350,13 @@ def f3(numPoints):
             file.write('\n')
 """
 
-nameFunctionMap = {"f1":f1, "f2":f2, "f3":f3, "f4":f4, "f5":f5, "f6":f6, "f7":f7, "f8":f8, "f9":f9, "f01":f01, "f02":f02, "f03":f03}
+nameFunctionMap = {"f1":f1, "f2":f2, "f3":f3, "f4":f4, "f5":f5, "f6":f6, "f7":f7, "f8":f8, "f9":f9, "f01":f01, "f02":f02, "f03":f03, "f04":f04, "f05":f05, "f06":f06}
 
 def main():
 
     parser = argparse.ArgumentParser(description='create dataset')
     parser.add_argument('--function', default='f1', type=str, help='function name (f1 - fn)')
-    parser.add_argument('--numPoints', default='30', type=int, help='number of points (per function) to be generated')
+    parser.add_argument('--numPoints', default='100', type=int, help='number of points (per function) to be generated')
     args = parser.parse_args()
 
     if not os.path.exists(dir):

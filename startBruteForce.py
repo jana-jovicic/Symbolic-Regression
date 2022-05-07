@@ -45,7 +45,7 @@ def main():
 
     X, y = loadDataset(args.datapointsFile)
    
-    dir = './BruteForce/results/'
+    dir = './results/BruteForce/'
     if not os.path.exists(dir):
         os.makedirs(dir)
 

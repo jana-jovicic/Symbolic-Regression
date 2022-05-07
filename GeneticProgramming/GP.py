@@ -153,14 +153,14 @@ class GP:
             
             # check if children meet constraints	
             
-            if (self.maxTreeSize > -1 and len(child1.subtrees()) > self.maxTreeSize):
+            if self.maxTreeSize > -1 and len(child1.subtrees()) > self.maxTreeSize:
                 #print("Child1 len in maxTreeSize", len(child1.subtrees()))
                 invalidChild1 = True
             elif (child1.height() < self.minDepth):
                 invalidChild1 = True
 
             
-            if (self.maxTreeSize > -1 and len(child2.subtrees()) > self.maxTreeSize):
+            if self.maxTreeSize > -1 and len(child2.subtrees()) > self.maxTreeSize:
                 #print("Child2 len in maxTreeSize", len(child2.subtrees()))
                 invalidChild2 = True
             elif (child2.height() < self.minDepth):

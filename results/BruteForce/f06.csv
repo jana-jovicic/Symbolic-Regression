@@ -1,0 +1,2 @@
+realEquation,foundExactSolution,exactSolution,sympyEquivalence,nearestBestSolution,nearestBestSolutionError,Time (h:m:s),maxGivenHours
+-x1**2 + x1 + sin(x0),/,/,/,((x0 + x1) - (x1 * x1)),0.003551071637073524,-1:59:59.97,3
