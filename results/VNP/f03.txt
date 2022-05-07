@@ -1,4 +1,4 @@
-K_MAX: 6
+K_MAX: 4
 Min depth of initial tree: 2
 Max depth of initial tree: 4
 Max depth of created trees: 6

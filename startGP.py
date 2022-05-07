@@ -13,7 +13,7 @@ from expression import *
 from GeneticProgramming.GP import GP
 from GeneticProgramming.GPEstimator import GeneticProgrammingSymbolicRegressionEstimator
 from GeneticProgramming.fitness import mse, r2Score, rmse, nrmse
-from util.loadDatasets import loadRealDataset, loadGeneratedDataset, loadSynchronousMachineDataset, loadYachtDataset
+from util.loadDatasets import loadGeneratedDataset, loadYachtDataset
 from util.yamlParser import getConfig
 
 np.random.seed(42)
@@ -42,7 +42,7 @@ def main():
 	"""
 
 	parser = argparse.ArgumentParser(description='GP')
-	parser.add_argument("--datasetType", type=str, default='generated', help='type of dataset (could be: "generated", "real")')
+	parser.add_argument("--datasetType", type=str, default='generated', help='type of dataset (could be: "generated", "yacht")')
 	parser.add_argument("--standardizeData", default=False, action='store_true', help='flag to indicate whether or not to standardize data')
 	parser.add_argument("--config", type=str, default='./configs/gp.yaml', help='path to configuration file')
 	parser.add_argument('--datapointsFile', required=False, default='generatedDatasets/f1.txt', type=str, help='path to file that contains datapoints')
@@ -78,12 +78,6 @@ def main():
 	
 	if args.datasetType == "generated":
 		X, y = loadGeneratedDataset(args.datapointsFile)
-	elif args.datasetType == "real":
-		fileType = args.datapointsFile[args.datapointsFile.rfind('.')+1:]
-		#print(fileType)
-		X, y = loadRealDataset(args.datapointsFile, fileType)
-	elif args.datasetType == "synchronous_machine":
-		X, y = loadSynchronousMachineDataset(args.datapointsFile)
 	elif args.datasetType == "yacht":
 		X, y = loadYachtDataset(args.datapointsFile)
 

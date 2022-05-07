@@ -136,19 +136,19 @@ def main():
         y_train_pred = vnp.predict(X_train)
         y_test_pred = vnp.predict(X_test)
 
-        trainErr = r2Score(y_train, y_train_pred)
-        testErr = r2Score(y_test, y_test_pred)
+        trainScore = r2Score(y_train, y_train_pred)
+        testScore = r2Score(y_test, y_test_pred)
 
-        if np.isnan(trainErr):
-            trainErr = np.inf
+        if np.isnan(trainScore):
+            trainScore = -np.inf
 
-        if np.isnan(testErr):
-            testErr = np.inf
+        if np.isnan(testScore):
+            testScore = -np.inf
         
-        print('Train r2 score:', trainErr)
-        print('Test r2 score:', testErr)
+        print('Train r2 score:', trainScore)
+        print('Test r2 score:', testScore)
 
-        data = [run, trainErr, testErr, bestStr, bestSolutionSimplified, vnp.iteration, executionTimeFormated]
+        data = [run, trainScore, testScore, bestStr, bestSolutionSimplified, vnp.iteration, executionTimeFormated]
         if args.realEquation:
             data.append(sympyEquivalence)
         with open(csvFile, 'a+', encoding='UTF8') as file:

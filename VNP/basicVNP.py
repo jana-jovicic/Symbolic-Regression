@@ -92,8 +92,8 @@ class VNP:
                 newT = self.shake(T, k, X, y)
                 _, transformedT = ETT(newT, X, y)
 
-                #if not transformedT.isFeasible(X):
-                    #continue
+                if not transformedT.isFeasible(X):
+                    continue
 
                 if self.maxTreeDepth > -1 and transformedT.height() > self.maxTreeDepth:
                     continue
@@ -107,6 +107,7 @@ class VNP:
                 if score > self.bestSolutionScore:
                     self.bestSolutionScore = score
                     self.bestSolution = deepcopy(T)
+                    k = 0
 
                 print("Iteration {0}: Best solution {1}, score {2}".format(self.iteration, self.bestSolution.stringRepresentation(), self.bestSolutionScore))
                 

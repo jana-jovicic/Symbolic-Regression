@@ -14,7 +14,7 @@ def loadGeneratedDataset(datapointsFile):
 			y.append(float(line[-1]))
 	return np.array(X), np.array(y)
 
-
+"""
 def loadXLS(datapointsFile):
     X, y = [], []
     df = pd.read_excel(datapointsFile)
@@ -62,7 +62,7 @@ def loadSynchronousMachineDataset(datapointsFile):
         y.append(float(row[-1]))
    
     return np.array(X), np.array(y)
-
+"""
 
 def loadYachtDataset(datapointsFile):
     X, y = [], []
