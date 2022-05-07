@@ -192,17 +192,17 @@ def f01(numPoints):
             file.write('\n')
 
 def f02(numPoints):
-    # f02 = x0*x1 + x1**2 + x0
+    # f02 = x1 + x1**2 + x0
     
     filenameEquation = dir + 'f02_solution.txt'
     open(filenameEquation, 'w').close()
     with open(filenameEquation, 'w') as file:
-        file.write('x0*x1 + x1**2 + x0')
+        file.write('x1 + x1**2 + x0')
     filename = dir+'f02.txt'
     for i in range(numPoints):
         x0 = np.random.random()*2 - 1
         x1 = np.random.random()*2 - 1
-        f = x0*x1 + x1**2 + x0
+        f = x1 + x1**2 + x0
         #print(f)
         with open(filename, 'a+') as file:
             file.write(str(x0)+' ')
@@ -211,17 +211,17 @@ def f02(numPoints):
             file.write('\n')
 
 def f03(numPoints):
-    # f03 = x0*x1 + cos(x0) + x1
+    # f03 = x0*x1 + cos(x0)
     
     filenameEquation = dir + 'f03_solution.txt'
     open(filenameEquation, 'w').close()
     with open(filenameEquation, 'w') as file:
-        file.write('x0*x1 + cos(x0) + x1')
+        file.write('x0*x1 + cos(x0)')
     filename = dir+'f03.txt'
     for i in range(numPoints):
         x0 = np.random.random()*2 - 1
         x1 = np.random.random()*2 - 1
-        f = x0*x1 + np.cos(x0) + x1
+        f = x0*x1 + np.cos(x0)
         #print(f)
         with open(filename, 'a+') as file:
             file.write(str(x0)+' ')

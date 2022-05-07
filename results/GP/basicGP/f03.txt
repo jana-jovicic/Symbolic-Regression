@@ -4,8 +4,8 @@ Reproduction size: 300
 Mutation rate: 0.2
 One point mutation rate: 0.2
 Min tree depth: 2
-Max tree depth in initialization phase: 8
-Max tree size: 16
+Max tree depth in initialization phase: 3
+Max tree size: 8
 Tournament size: 3
 Fitness type: adjusted
 Error type: r2_score

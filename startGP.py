@@ -116,9 +116,9 @@ def main():
 	csvFile = resFile[: resFile.rfind('.')] + '.csv'
 	open(csvFile, 'w').close()
 	if errorType == 'r2_score':
-		header = ['Run', 'TrainR2Score', 'TestR2Score', 'BestIndividual', 'BestIndividualSimplified', 'GenerationOfBestSolution', 'Time', 'SympyEquivalence']
+		header = ['Run', 'TrainR2Score', 'TestR2Score', 'BestIndividual', 'BestIndividualSimplified', 'Time', 'SympyEquivalence']
 	else:
-		header = ['Run', 'TrainError', 'TestError', 'BestIndividual', 'BestIndividualSimplified', 'GenerationOfBestSolution', 'Time', 'SympyEquivalence']
+		header = ['Run', 'TrainError', 'TestError', 'BestIndividual', 'BestIndividualSimplified', 'Time', 'SympyEquivalence']
 
 	with open(csvFile, 'w', encoding='UTF8') as file:
 		writer = csv.writer(file)
@@ -210,8 +210,7 @@ def main():
 			file.write('-------------------------------\n')
 		"""
 
-		generationOfBestSolution = gpEstimator.gp.generations
-		data = [run, trainErr, testErr, bestStr, bestIndividualSimplified, generationOfBestSolution, executionTimeFormated]
+		data = [run, trainErr, testErr, bestStr, bestIndividualSimplified, executionTimeFormated]
 		if args.realEquation:
 			data.append(sympyEquivalence)
 		with open(csvFile, 'a+', encoding='UTF8') as file:

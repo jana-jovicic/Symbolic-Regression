@@ -12,7 +12,7 @@ from sympy import simplify
 from sympy.parsing.sympy_parser import parse_expr
 
 from expression import *
-from util.loadDatasets import loadGeneratedDataset, loadRealDataset, loadSynchronousMachineDataset, loadYachtDataset
+from util.loadDatasets import loadGeneratedDataset, loadYachtDataset
 from util.yamlParser import getConfig
 
 np.random.seed(42)
@@ -64,15 +64,7 @@ def main():
     for i in range(nFeatures):
         terminals.append(VariableNode(i))
 
-    print("terminals", terminals)
-    print("functions", fs)
-    
-    """
-    vnp = VNP(terminals=terminals, functions=fs, minInitTreeDepth = cfg['MIN_INIT_TREE_DEPTH'], maxInitTreeDepth = cfg['MAX_INIT_TREE_DEPTH'], 
-            kMax = cfg['K_MAX'], maxIterations=cfg['MAX_ITERATIONS'], maxHours=cfg['MAX_HOURS'],
-            maxTreeDepth = cfg['MAX_TREE_DEPTH'])
-    """
-
+   
     dir = './results/VNP'
 
     if not os.path.exists(dir):

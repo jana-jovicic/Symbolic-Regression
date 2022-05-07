@@ -1,5 +1,5 @@
 python startGP.py \
     --datasetType generated \
     --config ./configs/gp.yaml \
-    --datapointsFile generatedDatasets/f8.txt \
-    --realEquation generatedDatasets/f8_solution.txt
+    --datapointsFile generatedDatasets/f02.txt \
+    --realEquation generatedDatasets/f02_solution.txt
