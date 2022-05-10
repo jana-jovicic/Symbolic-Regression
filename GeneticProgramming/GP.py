@@ -48,12 +48,7 @@ class GP:
         terminate = False
         elapsedTime = time.time() - self.startTime
         hours, rem = divmod(elapsedTime, 3600)
-        #print(self.fitnessFunction.bestIndividual.fitness)
-        #print(self.errorEpsilon)
-        #print(type(self.fitnessFunction.bestIndividual.fitness))
-        #print(type(self.errorEpsilon))
-
-        #if self.fitnessFunction.bestIndividual.fitness < self.errorEpsilon:
+        
         if self.fitnessType == 'adjusted' or self.fitnessType == 'normalizedAdjusted':
             if self.fitnessFunction.bestIndividual.fitness > 0.9:
                 terminate = True
@@ -100,9 +95,6 @@ class GP:
             
 
             self.fitnessFunction.evaluate(t)
-
-            #print(t.stringRepresentation())
-            #print()
 
             population.append(t)
         
@@ -154,14 +146,12 @@ class GP:
             # check if children meet constraints	
             
             if self.maxTreeSize > -1 and len(child1.subtrees()) > self.maxTreeSize:
-                #print("Child1 len in maxTreeSize", len(child1.subtrees()))
                 invalidChild1 = True
             elif (child1.height() < self.minDepth):
                 invalidChild1 = True
 
             
             if self.maxTreeSize > -1 and len(child2.subtrees()) > self.maxTreeSize:
-                #print("Child2 len in maxTreeSize", len(child2.subtrees()))
                 invalidChild2 = True
             elif (child2.height() < self.minDepth):
                 invalidChild2 = True
@@ -208,8 +198,5 @@ class GP:
     def calculateSumOfAdjustedFitnesses(self, population):
         sumAdjFit = 0
         for individual in population:
-            #print("sumAdj indiv", individual.stringRepresentation())
-            #print("sumAdj indiv value",  individual.value(self.fitnessFunction.X_train))
             sumAdjFit = sumAdjFit + adjustedFitness(self.fitnessFunction.y_train, individual.value(self.fitnessFunction.X_train))
-            #print('sumAdjFit', sumAdjFit)
         return sumAdjFit

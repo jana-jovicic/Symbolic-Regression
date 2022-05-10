@@ -12,7 +12,7 @@ from sympy import simplify
 from sympy.parsing.sympy_parser import parse_expr
 
 from expression import *
-from util.loadDatasets import loadGeneratedDataset, loadYachtDataset
+from util.loadDatasets import loadAirfoilDataset, loadDEEDataset, loadGeneratedDataset, loadYachtDataset
 from util.yamlParser import getConfig
 
 np.random.seed(42)
@@ -42,9 +42,13 @@ def main():
         X, y = loadGeneratedDataset(args.datapointsFile)
     elif args.datasetType == "yacht":
         X, y = loadYachtDataset(args.datapointsFile)
+    elif args.datasetType == "dee":
+        X, y = loadDEEDataset(args.datapointsFile)
+    elif args.datasetType == "airfoil":
+        X, y = loadAirfoilDataset(args.datapointsFile)
 
-    #print('Xs', X[:5])
-    #print('ys', y[:5])
+    print('Xs', X[:5])
+    print('ys', y[:5])
 
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
@@ -140,7 +144,7 @@ def main():
         print('Train r2 score:', trainScore)
         print('Test r2 score:', testScore)
 
-        data = [run, trainScore, testScore, bestStr, bestSolutionSimplified, vnp.iteration, executionTimeFormated]
+        data = [run, trainScore, testScore, bestStr, bestSolutionSimplified, vnp.bestSolutionIteration, executionTimeFormated]
         if args.realEquation:
             data.append(sympyEquivalence)
         with open(csvFile, 'a+', encoding='UTF8') as file:

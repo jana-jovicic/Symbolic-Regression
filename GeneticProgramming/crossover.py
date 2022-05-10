@@ -168,26 +168,18 @@ def SSC(individual1, individual2, X, LBSS, UBSS, maxTrials):
         nodes1 = child1.subtrees()
         nodes2 = child2.subtrees()
 
-        #print("nodes1", nodes1)
-        #print("nodes2", nodes2)
-
         nodes1 = candidateNodesAtRandomDepth(nodes1)
         nodes2 = candidateNodesAtRandomDepth(nodes2)
 
         subtree1 = nodes1[randint(len(nodes1))]
-        #print("subtree1", subtree1.stringRepresentation())
         subtree2 = nodes2[randint(len(nodes2))]
-        #print("subtree2", subtree2.stringRepresentation())
 
 
         # Sampling Semantics of subtree1
         ps = subtree1.value(X)
-        #print("SS subtree1", ps)
-        #print(type(ps))
 
         # Sampling Semantics of subtree2
         qs = subtree2.value(X)
-        #print("SS subtree2", qs)
 
         # case when subtree is a constant
         if ps.size == 1:
@@ -207,9 +199,6 @@ def SSC(individual1, individual2, X, LBSS, UBSS, maxTrials):
 
         # Semantic Similarity
         SS = LBSS <= SSD <= UBSS
-        #print("Semantic Similarity: ", SS)
-        #print()
-
 
         if SS:
 

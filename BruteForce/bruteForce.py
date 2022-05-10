@@ -70,9 +70,6 @@ class BruteForce():
             if foundExactSolution:
                 print('solution', exactSolution.stringRepresentation())
                 break
-            #print('functions', functions)
-
-
             
             # -----------
             # just for debug
@@ -86,7 +83,6 @@ class BruteForce():
             for function in functions:
 
                 hours, rem = divmod(time.time() - self.startTime, 3600)
-                #minutes, seconds = divmod(rem, 60)
                 
                 if hours >= self.maxHours:
                     break
@@ -98,32 +94,11 @@ class BruteForce():
                     terminals.append(deepcopy(function))
             
             
-
-            #functions = list(set(functions))     
-            
-            #for function in functions:
-                #print("func", function.stringRepresentation())
-                #terminals.append(deepcopy(function))
-
-            #terminals = list(set(terminals))
-
-
-            #for term in terminals:
-                #print("term", term.stringRepresentation())
-
             print("Generating permutations...")
             terminalPermutations = []
             for pair in itertools.product(terminals, repeat=2):
-                #print(pair[0].stringRepresentation(), pair[1].stringRepresentation())
                 terminalPermutations.append(pair)
             print("Finished Generating permutations")
-            
-
-            #for pair in terminalPermutations:
-                #print("pair", pair[0].stringRepresentation(),  pair[1].stringRepresentation())
-
-
-            #print('------------------')
 
 
         return foundExactSolution, exactSolution, exactSolutionErr, self.currentBestSolution, self.currentBestSolutionError
@@ -143,7 +118,6 @@ class BruteForce():
             #print('func', func)
 
             n = len(terminalPermutations)
-            #for pair in terminalPermutations:
             for i in range(n):
 
                 hours, rem = divmod(time.time() - self.startTime, 3600)
@@ -153,7 +127,6 @@ class BruteForce():
                     return False, '', '', generatedFunctions, True
 
                 pair = terminalPermutations[i]
-                #func.appendLeft(deepcopy(pair[0]))
 
                 if func.arity == 1:
                     if pair[0] == terminalPermutations[i-1][0]:
@@ -172,25 +145,15 @@ class BruteForce():
 
                 yPred = func.value(self.X)
                 yPred = [np.inf if np.isnan(y) else y for y in yPred]
-                #print(y_pred[:5])
                 err = self.mse(self.y, yPred)
-                #print("mse", err)
 
                 if err < self.currentBestSolutionError:
                     self.currentBestSolution = func
                     self.currentBestSolutionError = err
 
-                    """
-                    with open(self.csvFile, 'w', encoding='UTF8') as file:
-                        writer = csv.writer(file)
-                        writer.writerow(data)
-                    """
-
                     self.updateResultsFile()
                     
 
-                #print(self.currentBestSolution.stringRepresentation())
-                #print(self.currentBestSolutionError)
 
                 if err < self.errorEpsilon:
                     foundExactSolution = True
@@ -208,59 +171,6 @@ class BruteForce():
 
 
     def updateResultsFile(self):
-
-        """
-        op = open(self.csvFile, "r")
-        dt = csv.DictReader(op)
-        up_dt = []
-
-        executionTime = round(time.time()) - self.startTime
-        hours, rem = divmod(executionTime, 3600)
-        minutes, seconds = divmod(rem, 60)
-        executionTimeFormated = '{:0>2}:{:0>2}:{:05.2f}'.format(int(hours), int(minutes), seconds)
-
-        for r in dt:
-            row = {
-                'realEquation': r['realEquation'],
-                'foundExactSolution': '/',
-                'exactSolution': '/',
-                'sympyEquivalence': '/',
-                'nearestBestSolution': self.currentBestSolution,
-                'nearestBestSolutionError': self.currentBestSolutionError,
-                'Time (h:m:s)': executionTimeFormated,
-                'maxGivenHours': self.maxHours}
-            up_dt.append(row)
-
-        print('up_dt', up_dt)
-        op.close()
-        op = open(self.csvFile, "w", newline='')
-        headers = ['realEquation', 'foundExactSolution', 'exactSolution', 'sympyEquivalence', 'nearestBestSolution', 'nearestBestSolutionError', 'Time (h:m:s)', 'maxGivenHours']
-        data = csv.DictWriter(op, delimiter=',', fieldnames=headers)
-        data.writerow(dict((heads, heads) for heads in headers))
-        data.writerows(up_dt)
-        
-        op.close()
-        """
-
-        """
-        tempfile = NamedTemporaryFile(mode='w', delete=False)
-
-        executionTime = round(time.time()) - self.startTime
-        hours, rem = divmod(executionTime, 3600)
-        minutes, seconds = divmod(rem, 60)
-        executionTimeFormated = '{:0>2}:{:0>2}:{:05.2f}'.format(int(hours), int(minutes), seconds)
-
-        header = ['realEquation', 'foundExactSolution', 'exactSolution', 'sympyEquivalence', 'nearestBestSolution', 'nearestBestSolutionError', 'Time (h:m:s)', 'maxGivenHours']
-
-        with open(self.csvFile, 'r') as csvfile, tempfile:
-            reader = csv.DictReader(csvfile, fieldnames=header)
-            writer = csv.DictWriter(tempfile, fieldnames=header)
-            for row in reader:
-                row = {'realEquation': row['realEquation'], 'foundExactSolution': row['foundExactSolution'], 'exactSolution': row['exactSolution'], 'sympyEquivalence': row['sympyEquivalence'], 'nearestBestSolution': self.currentBestSolution.stringRepresentation(), 'nearestBestSolutionError': self.currentBestSolutionError, 'Time (h:m:s)': executionTimeFormated, 'maxGivenHours': self.maxHours}
-                writer.writerow(row)
-
-        shutil.move(tempfile.name, self.csvFile)
-        """
 
         executionTime = round(time.time()) - self.startTime
         hours, rem = divmod(executionTime, 3600)

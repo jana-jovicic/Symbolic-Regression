@@ -61,6 +61,7 @@ def changeNodeValue(individual, functions, terminals):
 
 def swapSubtree(individual, functions, terminals, X, maxHeight=4, minDepth=2):
 
+
     newIndividual = deepcopy(individual)
 
     newBranch = generateRandomTree(functions, terminals, maxHeight, minDepth)

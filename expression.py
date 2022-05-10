@@ -155,24 +155,7 @@ class EphemeralRandomConstantNode(Node):
     def nodeType(self):
         return 'terminal'
 
-"""
-class ConstantNode(Node):
-    def __init__(self, valueNumber):
-        super(ConstantNode, self).__init__()
-        self.valueNumber = valueNumber
 
-    def __str__(self):
-        return str(self.valueNumber)    
-
-    def __repr__(self):
-        return str(self.valueNumber)   
-
-    def stringRepresentationSpecificNode(self, args):
-        return str(self.valueNumber)
-
-    def value(self, X):
-        return np.array(self.valueNumber)
-"""
 
 
 """

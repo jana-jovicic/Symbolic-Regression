@@ -306,49 +306,6 @@ def f09(numPoints):
             file.write(str(f))
             file.write('\n')
 
-"""
-def f2(numPoints):
-
-    filenameEquation = dir + 'f2_solution.txt'
-    open(filenameEquation, 'w').close()
-    with open(filenameEquation, 'w') as file:
-        file.write('x0**2 + x1**2 + x2**2')
-
-    filename = dir+'f2.txt'
-    open(filename, 'w').close()
-    for i in range(numPoints):
-        x0 = np.random.random()*2 - 1
-        x1 = np.random.random()*2 - 1
-        x2 = np.random.random()*2 - 1
-        f = x0**2 + x1**2 + x2**2
-        #print(f)
-        with open(filename, 'a+') as file:
-            file.write(str(x0)+' ')
-            file.write(str(x1)+' ')
-            file.write(str(x2)+' ')
-            file.write(str(f))
-            file.write('\n')
-
-def f3(numPoints):
-
-    filenameEquation = dir + 'f3_solution.txt'
-    open(filenameEquation, 'w').close()
-    with open(filenameEquation, 'w') as file:
-        file.write('x0**2 + x1**2')
-
-    filename = dir+'f3.txt'
-    open(filename, 'w').close()
-    for i in range(numPoints):
-        x0 = np.random.random()*2 - 1
-        x1 = np.random.random()*2 - 1
-        f = x0**2 + x1**2
-        #print(f)
-        with open(filename, 'a+') as file:
-            file.write(str(x0)+' ')
-            file.write(str(x1)+' ')
-            file.write(str(f))
-            file.write('\n')
-"""
 
 nameFunctionMap = {"f1":f1, "f2":f2, "f3":f3, "f4":f4, "f5":f5, "f6":f6, "f7":f7, "f8":f8, "f9":f9, "f01":f01, "f02":f02, "f03":f03, "f04":f04, "f05":f05, "f06":f06}
 

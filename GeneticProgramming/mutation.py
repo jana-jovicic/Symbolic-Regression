@@ -11,9 +11,7 @@ def onePointMutation(individual, functions, terminalVars):
     newIndividual = deepcopy(individual)
 
     subtreeNodes = newIndividual.subtrees()
-    #print(subtreeNodes)
     mutationProb = 1.0/len(subtreeNodes)
-    #print(mutationProb)
     varProb = 0.95
     
     arityFunctionsMap = {}
@@ -48,22 +46,16 @@ def onePointMutation(individual, functions, terminalVars):
                     newNode = deepcopy(terminalVars[randIdx])
                 else:
                     newNode = EphemeralRandomConstantNode()
-                    #randConst = randint(constInterval[0],constInterval[1])
-                    #newNode = ConstantNode(randConst)
             else:
                 randIdx = randint(len(arityFunctionsMap[arity]))
-                #print("randIdx", randIdx)
                 newNode = deepcopy(arityFunctionsMap[arity][randIdx])
-            #print("newNode", newNode)
+            
 
             # update link to left and right subtree
             if arity > 0:
                 newNode.appendLeft(subtreeNodes[i].left)
                 if arity == 2:
                     newNode.appendRight(subtreeNodes[i].right)
-
-            #print("newNode left child:", newNode.left)
-            #print("newNode right child:", newNode.right)
 
             # update link to parent node
             parent = subtreeNodes[i].parent
@@ -96,20 +88,16 @@ def subtreeMutation(individual, functions, terminals, X, maxHeight=4, minDepth=2
     newIndividual = deepcopy(individual)
 
     newBranch = generateRandomTree(functions, terminals, maxHeight, minDepth)
-    #print("newBranch", newBranch.stringRepresentation())
     
     while not newBranch.isFeasible(X):
         newBranch = generateRandomTree(functions, terminals, maxHeight, minDepth)
     
 
     subtreeNodes = newIndividual.subtrees()
-    #print("subtreeNodes", subtreeNodes)
 
     subtreeNodes = candidateNodesAtRandomDepth(subtreeNodes)
-    #print("subtreeNodes", subtreeNodes)
 
     toReplace = subtreeNodes[randint(len(subtreeNodes))]
-    #print("toReplace", toReplace.stringRepresentation())
 
     if toReplace.parent == None:
         #del individual
@@ -128,8 +116,6 @@ def subtreeMutation(individual, functions, terminals, X, maxHeight=4, minDepth=2
 def candidateNodesAtRandomDepth(nodes):
 
     depths = np.unique([x.depth() for x in nodes])
-    #print("depths", depths)
     chosenDepth = depths[randint(len(depths))]
-    #print("chosenDepth", chosenDepth)
     candidates = [x for x in nodes if x.depth() == chosenDepth]
     return candidates

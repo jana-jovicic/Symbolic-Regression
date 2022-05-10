@@ -8,11 +8,6 @@ from expression import EphemeralRandomConstantNode
 
 def generateRandomTree(functions, terminalVars, maxHeight, currentHeight=0, method='grow', minDepth=2, varProbability=0.8):
 
-    #print("method", method)
-    #print("functions", functions)
-    #print("terminals", terminalVars)
-    #print("currentHeight", currentHeight)
-    #print("maxHeight", maxHeight)
 
     if currentHeight == maxHeight:
         # Only terminal can be appended in order not to exceed maxHeight
@@ -20,11 +15,8 @@ def generateRandomTree(functions, terminalVars, maxHeight, currentHeight=0, meth
         if random() < varProbability:
             randIdx = randint(len(terminalVars))
             t = deepcopy(terminalVars[randIdx])
-            #print("terminal t:", t)
         else:
             t = EphemeralRandomConstantNode()
-            #randConst = randint(constInterval[0],constInterval[1])
-            #t = ConstantNode(randConst)
     else:
         if method == 'grow' and currentHeight >= minDepth:
             termsAndFuncs = terminalVars + functions
@@ -38,19 +30,15 @@ def generateRandomTree(functions, terminalVars, maxHeight, currentHeight=0, meth
         else:
             raise ValueError('Not supported tree generation method')
 
-        #print("t:", t)
 
 
         if t.arity > 0:
             leftChild = generateRandomTree(functions, terminalVars, maxHeight, currentHeight=currentHeight+1, method=method, minDepth=minDepth, varProbability=varProbability)
-            #print("arity leftChild", leftChild)
             t.appendLeft(leftChild)
 
         if t.arity == 2:
             rightChild = generateRandomTree(functions, terminalVars, maxHeight, currentHeight = currentHeight+1, method=method, minDepth=minDepth, varProbability=varProbability)
             t.appendRight(rightChild)
-
-        #print("t string:", t.stringRepresentation())
 
     return t
 

@@ -27,7 +27,6 @@ class VNP:
         for arg, val in values.items():
             setattr(self, arg, val)
 
-        #self.bestSolutionScore = -np.inf
         
 
 
@@ -38,7 +37,7 @@ class VNP:
 
         if self.bestSolutionScore == 1.0:
             terminate = True
-        elif self.iteration > self.maxIterations:
+        elif self.iteration >= self.maxIterations:
             terminate = True
         elif self.maxHours > 0 and hours >= self.maxHours:
             terminate = True
@@ -48,18 +47,11 @@ class VNP:
 
     def shake(self, T, k, X, y):
 
-        #neighborhoodTypes = [changeNodeValue(T, self.functions, self.terminals), swapSubtree(T, self.functions, self.terminals, X, self.maxInitTreeDepth, self.minInitTreeDepth)]
-        #s = np.random.choice([0,1])
-        #neighborhoodType = neighborhoodTypes[s]
-        #print("neighborhoodType", str(neighborhoodType))
 
         neighborhoodTypes = ['changeNodeValue', 'swapSubtree']
         s = np.random.choice(neighborhoodTypes)
 
         for i in range(k):
-
-            #newT = neighborhoodType(T)
-            #newT = neighborhoodTypes[s]
 
             if s == 'changeNodeValue':
                 newT = changeNodeValue(T, self.functions, self.terminals)
@@ -81,6 +73,7 @@ class VNP:
 
         self.bestSolution = T
         self.bestSolutionScore = r2Score(y, T.value(X))
+        self.bestSolutionIteration = 1
 
         self.iteration = 1
         self.startTime = time.time()
@@ -103,10 +96,10 @@ class VNP:
 
                 y_pred = T.value(X)
                 score = r2Score(y, y_pred)
-                #print("score",score)
                 if score > self.bestSolutionScore:
                     self.bestSolutionScore = score
                     self.bestSolution = deepcopy(T)
+                    self.bestSolutionIteration = self.iteration
                     k = 0
 
                 print("Iteration {0}: Best solution {1}, score {2}".format(self.iteration, self.bestSolution.stringRepresentation(), self.bestSolutionScore))

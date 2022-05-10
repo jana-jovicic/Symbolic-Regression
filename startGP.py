@@ -13,7 +13,7 @@ from expression import *
 from GeneticProgramming.GP import GP
 from GeneticProgramming.GPEstimator import GeneticProgrammingSymbolicRegressionEstimator
 from GeneticProgramming.fitness import mse, r2Score, rmse, nrmse
-from util.loadDatasets import loadGeneratedDataset, loadYachtDataset
+from util.loadDatasets import loadDEEDataset, loadGeneratedDataset, loadYachtDataset
 from util.yamlParser import getConfig
 
 np.random.seed(42)
@@ -23,26 +23,9 @@ functionNames = {"add": AddNode(), "sub": SubNode(), "mul": MulNode(), "div": Di
 
 def main():
 
-	"""
-	# Load regression dataset 
-	X, y = sklearn.datasets.load_boston( return_X_y=True )
-	print(X[:5])
-	print(y[:5])
-
-	# Take a dataset split
-	X_train, X_test, y_train, y_test = train_test_split( X, y, test_size=0.5, random_state=42 )
-
-	X_train = X_train[:5]
-	y_train = y_train[:5]
-	X_test = X_test[:5]
-	y_test = y_test[:5]
-
-	print(X_train)
-	print(y_train)
-	"""
 
 	parser = argparse.ArgumentParser(description='GP')
-	parser.add_argument("--datasetType", type=str, default='generated', help='type of dataset (could be: "generated", "yacht")')
+	parser.add_argument("--datasetType", type=str, default='generated', help='type of dataset (could be: "generated", "yacht", "dee")')
 	parser.add_argument("--standardizeData", default=False, action='store_true', help='flag to indicate whether or not to standardize data')
 	parser.add_argument("--config", type=str, default='./configs/gp.yaml', help='path to configuration file')
 	parser.add_argument('--datapointsFile', required=False, default='generatedDatasets/f1.txt', type=str, help='path to file that contains datapoints')
@@ -61,8 +44,6 @@ def main():
 	errorType = cfg['ERROR_TYPE']
 	fitnessType = cfg['FITNESS_TYPE']
 
-	# Initalize GP estimator
-
 
 	gpEstimator = GeneticProgrammingSymbolicRegressionEstimator(populationSize=cfg['POPULATION_SIZE'], maxGenerations=cfg['MAX_GENERATIONS'],
 		maxTime=cfg['MAX_HOURS'], maxEvaluations=cfg['MAX_EVALUATIONS'], verbose=cfg['VERBOSE'], 
@@ -80,11 +61,12 @@ def main():
 		X, y = loadGeneratedDataset(args.datapointsFile)
 	elif args.datasetType == "yacht":
 		X, y = loadYachtDataset(args.datapointsFile)
+	elif args.datasetType == "dee":
+		X, y = loadDEEDataset(args.datapointsFile)
 
 	print('Xs', X[:5])
 	print('ys', y[:5])
 
-	
 
 	X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
@@ -95,10 +77,7 @@ def main():
 		X_train = scaler.transform(X_train)
 		X_test = scaler.transform(X_test)
 
-	#print('X_train', X_train[:5])
 	
-
-	#dir = './GeneticProgramming/results/'
 	dir = './results/GP/'
 
 	if cfg['SSC']['USE_SSC']:
@@ -174,9 +153,6 @@ def main():
 		y_train_pred = gpEstimator.predict(X_train)
 		y_test_pred = gpEstimator.predict(X_test)
 
-		#print("X_train", X_train)
-		#print("y_train", y_train)
-		#print("y_train_pred", y_train_pred)
 
 		if errorType == 'mse':
 			trainErr = mse(y_train, y_train_pred)
@@ -200,15 +176,6 @@ def main():
 		print('Train' + errorType + ' :', trainErr)
 		print('Test' + errorType + ' :', testErr)
 
-		"""
-		with open(resFile, 'a+') as file:
-			file.write('Run ' + str(run) + ':\n')
-			file.write('Best individual: ' + bestStr + '\n')
-			file.write('Solution found at generation: ' + str(gpEstimator.gp.generations) + '\n')
-			file.write('Train error: ' + str(trainErr) + '\n')
-			file.write('Test error: ' + str(testErr) + '\n')
-			file.write('-------------------------------\n')
-		"""
 
 		data = [run, trainErr, testErr, bestStr, bestIndividualSimplified, executionTimeFormated]
 		if args.realEquation:

@@ -122,8 +122,6 @@ def main():
     data.append(str(executionTimeFormated))
     data.append(str(cfg['MAX_HOURS']))
 
-    #print("nearestBestSolution", nearestBestSolution.stringRepresentation())
-    #print("nearestBestSolutionError", nearestBestSolutionError)
 
     with open(csvFile, 'w', encoding='UTF8') as file:
         writer = csv.writer(file)
