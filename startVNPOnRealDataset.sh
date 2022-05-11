@@ -1,4 +1,4 @@
 python startVNP.py \
-    --datasetType dee \
+    --datasetType yacht \
     --config ./configs/vnp.yaml \
-    --datapointsFile datasets/dee.dat
+    --datapointsFile datasets/yacht_hydrodynamics.txt

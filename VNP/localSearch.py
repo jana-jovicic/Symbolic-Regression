@@ -29,9 +29,6 @@ def ETT(initialTree, X, y):
 
 
     FH = functionNodes + terminalNodes
-    #print(FH)
-
-    #for i in functionNodes:
 
     for k in range(len(functionNodes)):
         
@@ -44,8 +41,6 @@ def ETT(initialTree, X, y):
         #print("leftChild(i): ", i.left)
         #print("rightChild(i): ", i.right)
         
-        
-        #for j in FH:
 
         for m in range(len(FH)):
 

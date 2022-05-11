@@ -38,9 +38,8 @@ class BruteForce():
         nVariables = self.X.shape[1]
         for i in range(nVariables):
             terminals.append(VariableNode(i))
-        print("terminals", terminals)
-        print(type(terminals))
-       
+        #print("terminals", terminals)
+        
         self.currentBestSolution = ''
         self.currentBestSolutionError = np.inf
 
@@ -66,9 +65,9 @@ class BruteForce():
             if maxTimeExceeded:
                 break 
 
-            print('foundSolution', foundExactSolution)
+            #print('foundSolution', foundExactSolution)
             if foundExactSolution:
-                print('solution', exactSolution.stringRepresentation())
+                #print('solution', exactSolution.stringRepresentation())
                 break
             
             # -----------
@@ -115,7 +114,6 @@ class BruteForce():
         exactSolutionErr = np.inf
 
         for func in self.functions:
-            #print('func', func)
 
             n = len(terminalPermutations)
             for i in range(n):
@@ -139,7 +137,7 @@ class BruteForce():
 
                 if func.arity > 1:
                     func.appendRight(deepcopy(pair[1]))
-                print("func", func.stringRepresentation())
+                #print("func", func.stringRepresentation())
 
                 generatedFunctions.append(deepcopy(func))
 
@@ -159,8 +157,6 @@ class BruteForce():
                     foundExactSolution = True
                     exactSolution = func
                     exactSolutionErr = err
-                    #self.currentBestSolutionError = err
-                    #self.currentBestSolution = func
                     break
             
 
@@ -181,8 +177,7 @@ class BruteForce():
             reader = csv.reader(readFile)
             lines = list(reader)
             lines[1][4], lines[1][5], lines[1][6], lines[1][7] = self.currentBestSolution.stringRepresentation(), self.currentBestSolutionError, executionTimeFormated, self.maxHours
-            print(lines)
-        
+            
         with open(self.csvFile, 'w') as writeFile:
             writer = csv.writer(writeFile)
             writer.writerows(lines)

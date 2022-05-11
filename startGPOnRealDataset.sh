@@ -1,4 +1,4 @@
 python startGP.py \
-    --datasetType dee \
+    --datasetType yacht \
     --config ./configs/gp.yaml \
-    --datapointsFile datasets/dee.dat
+    --datapointsFile datasets/yacht_hydrodynamics.txt

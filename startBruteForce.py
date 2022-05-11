@@ -90,9 +90,9 @@ def main():
     executionTimeFormated = '{:0>2}:{:0>2}:{:05.2f}'.format(int(hours), int(minutes), seconds)
 
 
-    #print("foundExactSolution", foundExactSolution)
+    print("Found Exact Solution: ", foundExactSolution)
     if foundExactSolution:
-        #print("exactSolution", exactSolution.stringRepresentation())
+        print("Exact Solution:", exactSolution.stringRepresentation())
         #print("exactSolutionError", exactSolutionError)
 
         data.append(str(foundExactSolution))
@@ -100,13 +100,12 @@ def main():
 
         # check with sympy if it is exactly equivalent
         if args.realEquation:
-            #realEquationSympy = parse_expr(file.readline())
             exactSolutionSympy = parse_expr(exactSolution.stringRepresentation())
-            print("realEquationSympy",realEquationSympy)
+            #print("realEquationSympy",realEquationSympy)
             equationsDiff = exactSolutionSympy - realEquationSympy
-            print("equationsDiff", equationsDiff)   
+            #print("equationsDiff", equationsDiff)   
             diffSimplified = simplify(equationsDiff)
-            print("diffSimplified simplified", diffSimplified)  
+            #print("diffSimplified simplified", diffSimplified)  
             data.append(str(diffSimplified == 0))
         else:
             data.append('/')
