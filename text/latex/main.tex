@@ -1,0 +1,184 @@
+% Format teze zasnovan je na paketu memoir
+% http://tug.ctan.org/macros/latex/contrib/memoir/memman.pdf ili
+% http://texdoc.net/texmf-dist/doc/latex/memoir/memman.pdf
+% 
+% Prilikom zadavanja klase memoir, navedenim opcijama se podešava 
+% veličina slova (12pt) i jednostrano štampanje (oneside).
+% Ove parametre možete menjati samo ako pravite nezvanične verzije
+% mastera za privatnu upotrebu (na primer, u b5 varijanti ima smisla 
+% smanjiti 
+\documentclass[12pt,oneside]{memoir} 
+
+\usepackage{hyphsubst}
+\usepackage{subfiles}
+
+% Paket koji definiše sve specifičnosti master rada Matematičkog fakulteta
+\usepackage[latinica]{matfmaster} 
+
+\usepackage{multirow}
+\usepackage{mathtools}
+\usepackage{algorithmicx}
+\usepackage[Algorithm,ruled]{algorithm}
+\usepackage{algorithm,algcompatible,amsmath}
+\algnewcommand\DESCRIPTION{\item[\textbf{Opis:}]}%
+\algnewcommand\INPUT{\item[\textbf{Ulaz:}]}%
+\algnewcommand\OUTPUT{\item[\textbf{Izlaz:}]}%
+
+\usepackage[clean]{svg}
+
+\algnewcommand\algorithmicforeach{\textbf{for each}}
+\algdef{S}[FOR]{ForEach}[1]{\algorithmicforeach\ #1\ \algorithmicdo}
+
+\usepackage{mathtools}
+
+\usepackage{fourier} 
+\usepackage{array}
+\usepackage{makecell}
+\renewcommand\theadalign{cc}
+\renewcommand\theadfont{\bfseries}
+\renewcommand\theadgape{\Gape[4pt]}
+\renewcommand\cellgape{\Gape[4pt]}
+
+\usepackage{amsmath,bm}
+\usepackage{adjustbox}
+
+\usepackage[demo]{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+
+\usepackage{lscape} 
+
+% Datoteka sa literaturom u BibTex tj. BibLaTeX/Biber formatu
+\bib{literature}
+
+% Ime kandidata na srpskom jeziku (u odabranom pismu)
+\autor{Jana Jovičić}
+% Naslov teze na srpskom jeziku (u odabranom pismu)
+\naslov{Metode za rešavanje problema simboličke regresije}
+% Godina u kojoj je teza predana komisiji
+\godina{2022}
+% Ime i afilijacija mentora (u odabranom pismu)
+\mentor{dr Aleksandar \textsc{Kartelj}, docent\\ Univerzitet u Beogradu, Matematički fakultet}
+% Ime i afilijacija prvog člana komisije (u odabranom pismu)
+\komisijaA{prof. dr Nenad \textsc{Mitić}, redovni profesor\\  Univerzitet u Beogradu, Matematički fakultet}
+% Ime i afilijacija drugog člana komisije (u odabranom pismu)
+\komisijaB{dr Milana \textsc{Grbić}, docent\\ Univerzitet u Banjoj Luci, Prirodno-matematički fakultet}
+% Ime i afilijacija trećeg člana komisije (opciono)
+% \komisijaC{}
+% Ime i afilijacija četvrtog člana komisije (opciono)
+% \komisijaD{}
+% Datum odbrane (odkomentarisati narednu liniju i upisati datum odbrane ako je poznat)
+% \datumodbrane{}
+
+% Apstrakt na srpskom jeziku (u odabranom pismu)
+\apstr{%
+
+Simbolička regresija predstavlja tip regresione analize. Njen cilj je pronalazak modela kojim se najbolje opisuje dati skup podataka. Proces formiranja modela se sastoji od pretrage prostora matematičkih (odnosno simboličkih) izraza i konstruisanja izraza koji najbolje uspostavlja vezu između ulaznih promenljivih i ciljne promenljive. Tokom pretrage, istovremeno se optimizuju i struktura modela i njegovi parametri. U ovom radu su predstavljena tri načina rešavanja ovog problema - jedan pomoću metode grube sile i dva metaheuristička pristupa. Od metaheurističkih pristupa korišćeni su metoda promenljivih okolina i dve varijante genetskog programiranja, koje se međusobno razlikuju po načinu ukrštanja jedinki. Kod jedne varijante genetskog programiranja koristi se standardni operator ukrštanja, a kod druge operator ukrštanja koji je zasnovan na semantičkoj sličnosti. Kvalitet razvijenih metaheurističkih metoda je upoređen preko rezultata dobijenih testiranjem na instancama problema različitih dimenzija. Na instancama manjih dimenzija, metaheurističke metode su upoređene i sa rezultatima dobijenim algoritmom grube sile. Za evaluaciju su korišćene slučajno generisane instance izraza koji se često razmatraju u literaturi vezanoj za ovaj problem, kao i jedan od javno dostupnih skupova podataka za regresiju.
+}
+
+% Ključne reči na srpskom jeziku (u odabranom pismu)
+\kljucnereci{simbolička regresija, metaheuristike, genetsko programiranje, metoda promenljivih okolina, optimizacija}
+
+\begin{document}
+% ==============================================================================
+% Uvodni deo teze
+\frontmatter
+% ==============================================================================
+% Naslovna strana
+\naslovna
+% Strana sa podacima o mentoru i članovima komisije
+\komisija
+
+% Strana sa podacima o disertaciji na srpskom jeziku
+\apstrakt
+% Sadržaj teze
+\tableofcontents*
+
+% ==============================================================================
+% Glavni deo teze
+\mainmatter
+% ==============================================================================
+
+% ------------------------------------------------------------------------------
+\chapter{Uvod}
+% ------------------------------------------------------------------------------
+
+Osnovu bilo kog naučnog procesa obično čini modelovanje različitih osobina fizičkih sistema, koji su predmet njihovog istraživanja, pomoću promenljivih, kao i razumevanje odnosa između tih promenljivih. Simbolička regresija nastoji da otkrije te odnose tako što pretražuje prostor matematičkih izraza kako bi pronašla onaj koji najbolje opisuje dostupni skup podataka. Simbolička regresija predstavlja tip regresione analize koji istovremeno uči i o strukturi modela kojim se opisuju dati podaci, i njegove parametre. Kako ne zahteva prethodnu specifikaciju strukture modela, simbolička regresija je pod manjim uticajem ljudske greške ili nedovoljnog domenskog znanja, u poređenju sa drugim metodama koje već unapred pretpostavljaju formu modela.
+
+Problem simboličke regresije se smatra problemom kombinatorne optimizacije. Pošto je instance velikih dimenzija praktično nemoguće rešiti usled ograničenja vremenskih i memorijskih resursa, najčešće se traže aproksimativna rešenja problema, uglavnom pomoću razlčitih metaheurističkih metoda. Zbog ovoga se smatra da je simbolička regresija NP-težak problem, međutim to još uvek nije formalno dokazano.
+
+U ovom radu će biti prikazane dve metaheurističke metode i jedna metoda grube sile za rešavanje ovog problema. Rad je podeljen u pet poglavlja. U drugom poglavlju (\ref{chp:symReg}) izložen je kratak pregled najčešće korišćenih regresionih tehnika, prikazan je način evaluacije regresionih modela i predstavljen je problem simboličke regresije. U trećem poglavlju (\ref{chp:bruteForce}) je prikazan algoritam grube sile za rešavanje problema simboličke regresije. Poglavlje \ref{chp:metaheuristike} se bavi metaheurisičkim metodama za rešavanje ovog problema. U njemu su predstavljene metoda promenljivih okolina i dve varijante genetskog programiranja, koje se međusobno razlikuju po načinu ukrštanja jedinki. Kod jedne varijante genetskog programiranja koristi se standardni operator ukrštanja, a kod druge operator ukrštanja koji je zasnovan na semantičkoj sličnosti. Eksperimentalni rezultati su prikazani u poglavlju \ref{chp:rezultati}.
+
+
+
+% ------------------------------------------------------------------------------
+\chapter{Pojam simboličke regresije}
+\label{chp:symReg}
+
+% ------------------------------------------------------------------------------
+
+\subfile{sections/simbolickaRegresija}
+\newpage
+
+
+% ------------------------------------------------------------------------------
+\chapter{Algoritam grube sile za rešavanje problema simboličke regresije}
+\label{chp:bruteForce}
+
+\subfile{sections/bruteForce}
+\newpage
+% ------------------------------------------------------------------------------
+
+
+% ------------------------------------------------------------------------------
+\chapter{Metaheurističke metode za rešavanje problema simboličke regresije}
+\label{chp:metaheuristike}
+
+Kako simbolička regresija pripada grupi problema kombinatorne optimizacije, najčešći pristup njenom rešavanju je pomoću metaheuristika. U radu će biti predstavljeni pristupi rešavanja pomoću genetskog programiranja (uz različite vidove ukrštanja jedinki) i metode promenljivih okolina.
+
+\section{Genetsko programiranje}
+\label{sec:gp}
+
+\subfile{sections/gp}
+\newpage
+
+% ------------------------------------------------------------------------------
+
+\section{Metoda promenljivih okolina}
+\label{sec:vnp}
+
+\subfile{sections/vnp}
+\newpage
+
+% ------------------------------------------------------------------------------
+\chapter{Eksperimentalni rezultati}
+\label{chp:rezultati}
+
+\subfile{sections/rezultati}
+\newpage
+
+% ------------------------------------------------------------------------------
+
+
+
+% ------------------------------------------------------------------------------
+\chapter{Zaključak}
+\label{chp:zakljucak}
+
+\subfile{sections/zakljucak}
+\newpage
+% ------------------------------------------------------------------------------
+
+
+% ------------------------------------------------------------------------------
+% Literatura
+% ------------------------------------------------------------------------------
+\literatura
+
+% ==============================================================================
+% Završni deo teze i prilozi
+\backmatter
+% ==============================================================================
+
+
+\end{document}

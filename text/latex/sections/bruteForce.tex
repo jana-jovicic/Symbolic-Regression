@@ -1,0 +1,120 @@
+\documentclass[main.tex]{subfiles}
+
+%\usepackage[]{algorithm2e}
+
+\usepackage{algorithmicx}
+\usepackage[Algorithm,ruled]{algorithm}
+\usepackage{algorithm,algcompatible,amsmath}
+\algnewcommand\DESCRIPTION{\item[\textbf{Opis:}]}%
+\algnewcommand\INPUT{\item[\textbf{Ulaz:}]}%
+\algnewcommand\OUTPUT{\item[\textbf{Izlaz:}]}%
+
+
+
+\begin{document}
+
+%Kako bi se uporedila tačnost metaheurističih metoda nad instancama manjih dimenzija, u radu je implementiran i jedan algoritam grube sile koji sistematično pretražuje prostor matematičkih izraza isprobavanjem svih mogućih kombinacija podizraza sve dok ne stigne do zadovoljavajućeg rešenja.
+
+Radi dobijanja tačnih rešenja na instancama  manjih dimenzija, kao i za proveru tačnosti metaheurističkih metoda, u radu je implementiran i jedan algoritam grube sile, koji se zasniva na sistematičnoj pretrazi prostora matematičkih izraza. Pretraga podrazumeva isprobavanje svih mogućih kombinacija podizraza sve dok se ne stigne do zadovoljavajućeg rešenja.
+
+%Potraga za rešenjem se radi iterativno po visini sintaksnog stabla izraza. 
+Po ugledu na algoritam grube sile koji se koristi kao deo metode razvijene u \cite{AIFeynman}, potraga za rešenjem je implementirana iterativno po visini sintaksnog stabla izraza. 
+
+Prvo se proveravaju sva stabla visine 1 koja su generisana na osnovu svih datih funkcija i promenljivih. Ako među njima postoji izraz koji nad datim skupom podataka daje MSE grešku manju od definisanog parametra $\epsilon = 10^{-6}$ (dodatno pooštren kriterijum iz \cite{AIFeynman}), smatra se da je pronađeno tačno rešenje i pretraga se prekida. Ako takav izraz nije pronađen generišu se sva stabla visine 2. Postupak se ponavlja sve dok se ne pronađe tačno rešenje ili dok se ne dostigne definisano vremensko ograničenje. Pseudokod ovog postupka se može videti u algoritmima \autoref{alg:bruteForce} i \autoref{alg:buildTree}.
+
+\\
+\\
+
+\begin{algorithm}
+\floatname{algorithm}{Algoritam}
+\caption{Algoritam grube sile za simboličku regresiju}
+\label{alg:bruteForce}
+  \begin{algorithmic}[1]
+    %\DESCRIPTION Algoritam grube sile za simboličku regresiju
+    \INPUT  $X$ - skup vrednosti atributa, $y$ - skup vrednosti ciljne promenljive, 
+    $F$ - skup funkcija koje je moguće koristiti za kreiranje stabla izraza, $\epsilon$ - dozvoljena epsilon okolina greške, $vreme$ - maksimalan broj sati izvršavanja programa;
+    \OUTPUT $resenje$ - izraz koji predstavlja tačno rešenje problema, $najblizeResenje$ - izraz koji daje najmanju grešku, $uspeh$ - indikator koji govori da li je pronadjeno tačno resenje;
+    \STATE \textbf{Inicijalizacija:} ‎\textit{t} = lista promenljivih \color{gray}  // formiranih na osnovu ulaznog skupa podataka; \color{black} 
+    \WHILE{vremenski kriterijum zaustavljanja nije ispunjen}
+      %\STATE Formirati sve moguće parove terminala iz \textit{t} (kao permutacije dužine 2);
+      \STATE $T$ = svi mogući parovi terminala iz $t$; \color{gray} // \textit{generisani kao permutacije dužine 2} \color{black}
+      \STATE $uspeh$, $resenje$, $S$, $najblizeResenje$ = $konstruisiStabla$($T$, $F$, $X$, $y$, $\epsilon$);
+      \IF{$uspeh$}
+        \STATE \textbf{return} $uspeh$, $resenje$, $najblizeResenje$;
+      \ENDIF
+      %\STATE U $t$ dodati stabla generisana u ovoj iteraciji;
+      \STATE $t = t \cup S$;
+    \ENDWHILE
+    \STATE \textbf{return} $uspeh$, $resenje$, $najblizeResenje$;
+  \end{algorithmic}
+\end{algorithm}
+
+
+\begin{algorithm}
+\floatname{algorithm}{Algoritam}
+\caption{konstruisiStabla()}
+\label{alg:buildTree}
+  \begin{algorithmic}[1]
+    \DESCRIPTION Algoritam za konstruciju novih stabala i njihovu evaluaciju pri potrazi za rešenjem.
+    \INPUT $T$ - skup parova terminala, $F$ - skup funkcija koje je moguće koristiti za kreiranje stabla izraza,  $X$ - skup vrednosti atributa, $y$ - skup vrednosti ciljne promenljive, 
+    $\epsilon$ - dozvoljena epsilon okolina greške;
+    \OUTPUT $uspeh$ - indikator koji govori da li je pronadjeno tačno resenje, $resenje$ - tačno rešenje čija je greška manja od $\epsilon$, $S$ - skup generisanih stabala, tj. skup izraza čije stablo ima visinu jednaku trenutnoj iteraciji, $najblizeResenje$ - izraz koji daje najmanju grešku, ali ne nužno manju od $\epsilon$;
+    
+    \STATE \textbf{Inicijalizacija:} $minGreska = inf;$ $S = [];$ $resenje = {}' {}'; $ $uspeh = False;$
+    \FOR {$f \in F$}
+        \FOR {$par \in T$}
+            \IF {$f$ je unarna funkcija}
+                \IF {prvi član $para$ je jednak prvom članu prethodnog para}
+                    \STATE continue;
+                \ENDIF
+            \ENDIF
+            %\STATE Prvi clan $para$ postaviti kao levo podstablo od $f$;
+            \STATE $f.levo\_podstablo = par[0]$;
+            \IF {$f$ je binarna funkcija}
+                %\STATE Drugi clan $para$ postaviti kao desno podstablo od $f$;
+                \STATE $f.desno\_podstablo = par[1]$;
+            \ENDIF 
+            \STATE $S = S \cup f$
+            %\STATE $f$ dodati u $S$;
+            %\STATE Izračunati predviđene vrednosti kao vrednosti funkcije $f$ u tačkama iz $X$;
+            %\STATE Izračunati $gresku$ između predviđenih vrednosti i pravih vrednosti $y$;
+            \STATE $y_{pred} = f(X)$;
+            \STATE $greska = MSE(y_{pred}, y) $;
+            \IF {$greska < minGreska$}
+                \STATE $najblizeResenje = f$;
+                \STATE $minGreska = greska$;
+            \ENDIF 
+            \IF {$greska < \epsilon$}
+                \STATE $uspeh = True$;
+                \STATE $resenje = f$;
+                \STATE \textbf{break};
+            \ENDIF 
+        \ENDFOR
+        \IF {$uspeh$}
+            \STATE \textbf{break};
+        \ENDIF
+    \ENDFOR
+    \STATE \textbf{return} $uspeh$, $resenje$, $S$, $najblizeResenje$;
+  \end{algorithmic}
+\end{algorithm}
+
+Kod procedure za konstruisanje stabala, za svaku od ulaznih funkcija se formiraju sva moguća stabla tako da se data funkcija $f$ nalazi u korenu, dok podstabla čine do sada generisani terminali. 
+
+Pri prvom prolazu kroz proceduru, terminali su samo promenljive formirane na osnovu atributa datog skupa podataka (definisano u alg. \autoref{alg:bruteForce}, linije 1 i 3). Pri svakom narednom prolasku, u skup terminala se dodaju i stabla kreirana u prethodnoj iteraciji (alg. \autoref{alg:bruteForce}, linija 8). 
+
+Od terminala su generisane permutacije sa ponavljanjem dužine 2, tako da se dobiju sva moguća uparivanja terminala, koja će se dalje koristiti kao podstabla za trenutnu korenu funkciju $f$ (alg. \autoref{alg:bruteForce}, linija 3).
+
+Za svaku korenu funkciju $f$ se prolazi kroz sve generisane parove terminala (alg. \autoref{alg:buildTree}, linije 2 i 3).
+
+Ako je $f$ unarna funkcija, proverava se da li je prvi član trenutnog para isti kao i prvi član prethodno obrađenog para. Ako jeste, prelazi se na naredni par (alg. \autoref{alg:buildTree}, linije 4-8). Kako su parovi generisani iz skupa terminala kao permutacije dužine 2, u formiranom skupu biće grupisani po prvom paru, tako da će se dešavati da uzastopni parovi imaju isti prvi član. U tom slučaju, kako je $f$ unarna funkcija, već je u prethodnoj iteraciji bilo kreirano podstablo pomoću istog terminala, pa ga nema potrebe ponovo kreirati.
+
+Kao levo podstablo funkcije $f$ postavlja se prvi član iz para, a u sličaju da je $f$ binarna funkcija, kao desno podstablo postavlja se drugi član iz para (alg. \autoref{alg:buildTree}, linije 9-12).
+
+Tako formirana funkcija $f$ se dodaje u skup stabala koja su generisana u ovoj iteraciji, kako bi pri narednoj mogla da se iskoristi kao terminal (alg. \autoref{alg:buildTree}, linija 13).
+
+Zatim se računaju vrednosti funkcije $f$ u datim tačkama X i određuje se greška u odnosu na date stvarne vrednosti ciljne promenljive $y$ (alg. \autoref{alg:buildTree}, linije 14 i 15). Ukoliko je greška manja od trenutno najmanje greške, $f$ se pamti kao nova najbolja funkcija (alg. \autoref{alg:buildTree}, linije 16-19). Ako je greška manja od prosleđene vrednosti $\epsilon$, $f$ se uzima kao rešenje problema i dalja pretraga se prekida (alg. \autoref{alg:buildTree}, linije 20-24). %Najbliže rešenje se pamti za slučaj da se dostigne maksimalno dozvoljeno vreme izvršavanja programa.
+Najbliže rešenje se pamti kako bi se i u slučaju dostizanja maksimalnog dozvoljenog vremena izvršavanja programa dobilo do tad najbolje pronađeno rešenje.
+
+Može se desiti da algoritam grube sile ne uspe da stigne do tačnog rešenja ne samo zbog vremenskog ograničenja, već i zbog ograničenja memorijskih resursa. U svakoj iteraciji se povećava broj stabala koje je potrebno čuvati, jer ih je u narednoj iteraciji potrebno iskoristiti kao terminale. Ako je $n$ broj funkcijskih simbola, a $m$ broj parova terminala u trenutnoj iteraciji, broj stabala generisanih u toj iteraciji biće, u najgorem slučaju, jednak $n * m$.
+
+\end{document}

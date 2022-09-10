@@ -1,0 +1,20 @@
+\documentclass[main.tex]{subfiles}
+
+\begin{document}
+
+Predmet istraživanja ovog rada je problem simboličke regresije. Na početku rada dat je detaljan opis problema i prikazan je princip evaluacije metoda kojima se rešava.
+
+Primenom algoritma grube sile pokazano je da egzaktne metode nisu adekvatne za rešavanje ovog problema nad instancama velikih dimanzija zbog memorijskih i vremenskih ograničenja. U radu su implementirane i dve metaheurističke metode - metoda promenljivih okolina i genetsko programiranje sa dve vaijante ukrštanja jedinki. Analiza performansi heurističkih metoda je pokazala da je metoda promenljivih okolina uspešnija od obe varijante genetskog programiranja, i u smislu preciznosti i u smislu brzine izvršavanja.
+
+Dalji rad vezan za ovu oblast se može odvijati u više pravaca, među kojima su:
+\begin{itemize}
+    \item Implementacija drugih metaheurističkih metoda.
+    \item Unapređenje metode promenljivih okolina različitim modifikacijama. Na primer, implementacijom tehnike \textit{najbolje poboljšanje} umesto tehnike \textit{prvo poboljšanje} u koraku lokalne pretrage. Ili bi mogle biti isprobane i varijante redukovane (RVNS, \textit{Reduced VNS}) i iskrivljene (SVNS, \textit{Skewed VNS}) metode promenljivih okolina.
+    \item Hibrdizacija različitih metaheurističkih metoda.
+    \item Hibridizacija neke metaheurističke metode i neke metode dubokog učenja. Kao što je npr. urađeno u radu \cite{neuralGuidedGP} gde je kombinovano genetsko programiranje sa rekurentnim mrežama za učenje formiranja početne populacije.
+    \item Implementacija metode koja je u potpunosti zasnovana na dubokom učenju.
+\end{itemize}
+
+
+
+\end{document}
